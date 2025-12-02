@@ -26,7 +26,7 @@ ajanhetkille)
 - Tila (toimii / yleinen virhe)
 - Virhetilanteessa ihmisen pitää manuaalisesti säätää se normaaliin toimintatilaan
 - Virhetilanteessa ei lähetä lämpötiladataa
-- Ei tiedä mihin lohkoon kuuluu
+- **Jokainen anturi kuuluu johonkin lohkoon, mutta se ei tiedä mihin lohkoon se kuuluu**
 
 ## Mittaustulokset
 - Uniikki tunniste
@@ -35,6 +35,5 @@ ajanhetkille)
 ## Lohkot
 - Uniikki tunniste
 - Nimi
-- Sisältää vähintään yhden (1) anturin
-- Antureilla tunniste, tila sekä viimeisin mitta-arvo ja sen
-aikaleima
+- **Sisältää vähintään yhden (1) anturin**
+- Antureilla tunniste, tila sekä viimeisin mitta-arvo ja sen aikaleima
