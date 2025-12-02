@@ -16,7 +16,7 @@ ajanhetkille)
   - Näkymässä voidaan valita myös näyttämään mitta-arvo tiettyjen ajankohtien välille
 - Näytetään yksittäisen anturin kaikki tilamuutokset ajankohtineen
 - Voi hakea anturit niiden nykyisen tilan mukaan (näytetään tunniste, lohko ja tila)
-- Näytetään graafi virhetilantenteiden esiintymisajankohdista
+- <del>Näytetään graafi virhetilantenteiden esiintymisajankohdista</del>
 
 ## Anturit
 
