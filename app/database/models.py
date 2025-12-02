@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field, Relationship
+from pydantic import field_validator
 
 class SensorBase(SQLModel):
     name: str
@@ -17,6 +18,11 @@ class SensorDb(SensorBase, table=True):
 class MeasurementBase(SQLModel):
     measurement: float
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    @field_validator('measurement')
+    @classmethod
+    def round_measurement_to_one_decimal(cls, measurement: float) -> float:
+        return round(measurement, 1)
 
 class MeasurementIn(MeasurementBase):
     pass
