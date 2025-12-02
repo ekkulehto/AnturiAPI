@@ -14,6 +14,19 @@ class SensorDb(SensorBase, table=True):
     segment_id: int = Field(default=None, foreign_key='segmentdb.id', nullable=False)
     measurements: list['MeasurementDb'] = Relationship(back_populates='sensor')
     segment: 'SegmentDb' | None = Relationship(back_populates='sensors')
+    status_history: list['SensorStatusDb'] = Relationship(back_populates='sensor')
+
+class SensorStatusBase(SQLModel):
+    status: str
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SensorStatusIn(SensorStatusBase):
+    pass
+
+class SensorStatusDb(SensorStatusBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    sensor_id: int = Field(default=None, foreign_key='sensordb.id', nullable=False)
+    sensor: SensorDb | None = Relationship(back_populates='status_history')
 
 class MeasurementBase(SQLModel):
     temperature: float
