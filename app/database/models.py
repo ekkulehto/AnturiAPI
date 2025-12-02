@@ -1,6 +1,11 @@
 from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field, Relationship
 from pydantic import field_validator
+from enum import Enum
+
+class SensorStatus(str, Enum):
+    NORMAL = "NORMAL"
+    ERROR = "ERROR"
 
 # =================================================================================
 #    Sensor model
@@ -8,13 +13,13 @@ from pydantic import field_validator
 
 class SensorBase(SQLModel):
     name: str
-    status: str
 
 class SensorIn(SensorBase):
     pass
 
 class SensorDb(SensorBase, table=True):
     id: int = Field(default=None, primary_key=True)
+    status: SensorStatus = SensorStatus.NORMAL
     segment_id: int = Field(default=None, foreign_key='segmentdb.id', nullable=False)
     measurements: list['MeasurementDb'] = Relationship(back_populates='sensor')
     segment: 'SegmentDb' | None = Relationship(back_populates='sensors')
@@ -25,7 +30,7 @@ class SensorDb(SensorBase, table=True):
 # =================================================================================
 
 class SensorStatusBase(SQLModel):
-    status: str
+    status: SensorStatus
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class SensorStatusIn(SensorStatusBase):
