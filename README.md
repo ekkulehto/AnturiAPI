@@ -19,8 +19,8 @@ ajanhetkille)
 - <del>Näytetään graafi virhetilantenteiden esiintymisajankohdista</del>
 
 ## Anturit
-
 - Uniikki tunniste
+- Nimi
 - Lämpötila-arvo (C) yhden desimaalin tarkkuudella
 - Mittauksen aikaleima
 - Tila (toimii / yleinen virhe)
@@ -28,8 +28,13 @@ ajanhetkille)
 - Virhetilanteessa ei lähetä lämpötiladataa
 - Ei tiedä mihin lohkoon kuuluu
 
-## Lohkot
+## Mittaustulokset
+- Uniikki tunniste
+- Voi poistaa **yksittäisen** mittaustuloksen
 
+## Lohkot
+- Uniikki tunniste
+- Nimi
 - Sisältää vähintään yhden (1) anturin
 - Antureilla tunniste, tila sekä viimeisin mitta-arvo ja sen
 aikaleima
