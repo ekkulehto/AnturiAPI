@@ -19,6 +19,6 @@ def get_sensor_by_id(*, session: Session = Depends(get_session), sensor_id: int)
 def create_sensor(*, session: Session = Depends(get_session), sensor_in: SensorIn):
     return crud.create_sensor(session, sensor_in)
 
-@router.delete("/{pub_id}", response_model=SensorDb)
+@router.delete("/{sensor_id}", response_model=SensorDb)
 def delete_sensor_by_id(*, session: Session = Depends(get_session), sensor_id: int):
     return crud.delete_sensor_by_id(session, sensor_id)
