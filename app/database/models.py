@@ -22,6 +22,7 @@ class SensorIn(SensorBase):
 class SensorOut(SQLModel):
     id: int
     name: str
+    status: SensorStatus
     measurements: list['MeasurementOut'] = []
 
 class SensorDb(SensorBase, table=True):
