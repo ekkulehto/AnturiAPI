@@ -1,6 +1,8 @@
 from fastapi import HTTPException, Response, status
 from sqlmodel import Session, select
-from .models import SensorIn, SensorDb
+
+from ..schemas.filters import MeasurementFilter
+from .models import MeasurementDb, MeasurementOut, SensorIn, SensorDb, SensorOutWithMeasurements
 
 def create_sensor(session: Session, sensor_in: SensorIn):
     sensor = SensorDb.model_validate(sensor_in)
@@ -12,7 +14,7 @@ def create_sensor(session: Session, sensor_in: SensorIn):
 def get_all_sensors(session: Session):
     return session.exec(select(SensorDb)).all()
 
-def get_sensor_by_id(session: Session, sensor_id: int):
+def get_sensor_by_id(session: Session, sensor_id: int, filters: MeasurementFilter):
     sensor = session.get(SensorDb, sensor_id)
 
     if not sensor:
@@ -21,7 +23,27 @@ def get_sensor_by_id(session: Session, sensor_id: int):
             status_code=status.HTTP_404_NOT_FOUND
         )
     
-    return sensor
+    query = select(MeasurementDb).where(MeasurementDb.sensor_id == sensor_id)
+
+    if filters.since is not None:
+        query = query.where(MeasurementDb.timestamp >= filters.since)
+    if filters.until is not None:
+        query = query.where(MeasurementDb.timestamp <= filters.until)
+    
+    query = query.order_by(MeasurementDb.timestamp.desc())
+
+    if filters.since is None and filters.until is None:
+        query = query.limit(filters.limit)
+    
+    measurements_db = session.exec(query).all()
+    measurements_out = [MeasurementOut.model_validate(measurement) for measurement in measurements_db]
+
+    return SensorOutWithMeasurements(
+        id=sensor_id,
+        name=sensor.name,
+        status=sensor.status,
+        measurements=measurements_out
+    )
 
 def delete_sensor_by_id(session: Session, sensor_id: int):
     sensor = session.get(SensorDb, sensor_id)
