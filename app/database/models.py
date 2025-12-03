@@ -58,11 +58,11 @@ class SensorStatusBase(SQLModel):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class SensorStatusIn(SensorStatusBase):
-    pass
+    sensor_id: int
 
 class SensorStatusDb(SensorStatusBase, table=True):
     id: int = Field(default=None, primary_key=True)
-    sensor_id: int = Field(default=None, foreign_key='sensordb.id', nullable=False)
+    sensor_id: int = Field(foreign_key='sensordb.id', nullable=False)
     sensor: Optional['SensorDb'] = Relationship(back_populates='status_history')
 
 # =================================================================================
