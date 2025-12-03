@@ -19,6 +19,11 @@ class SensorBase(SQLModel):
 class SensorIn(SensorBase):
     pass
 
+class SensorOut(SQLModel):
+    id: int
+    name: str
+    measurements: list['MeasurementOut'] = []
+
 class SensorDb(SensorBase, table=True):
     id: int = Field(default=None, primary_key=True)
     status: SensorStatus = SensorStatus.NORMAL
@@ -48,6 +53,7 @@ class SensorStatusDb(SensorStatusBase, table=True):
 # =================================================================================
 
 class MeasurementBase(SQLModel):
+    sensor_id: int
     temperature: float
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -59,9 +65,14 @@ class MeasurementBase(SQLModel):
 class MeasurementIn(MeasurementBase):
     pass
 
+class MeasurementOut(SQLModel):
+    id: int
+    temperature: float
+    timestamp: datetime
+
 class MeasurementDb(MeasurementBase, table=True):
     id: int = Field(default=None, primary_key=True)
-    sensor_id: int = Field(default=None, foreign_key='sensordb.id')
+    sensor_id: int = Field(foreign_key='sensordb.id')
     sensor: Optional['SensorDb'] = Relationship(back_populates='measurements')
 
 # =================================================================================
@@ -73,6 +84,11 @@ class SegmentBase(SQLModel):
 
 class SegmentIn(SegmentBase):
     pass
+
+class SegmentOut(SQLModel):
+    id: int
+    name: str
+    sensors: list['SensorOut'] = []
 
 class SegmentDb(SegmentBase, table=True):
     id: int = Field(default=None, primary_key=True)
