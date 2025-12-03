@@ -2,9 +2,17 @@ from fastapi import HTTPException, Response, status
 from sqlmodel import Session, select
 
 from ..schemas.filters import MeasurementFilter
-from .models import MeasurementDb, MeasurementOut, SensorIn, SensorDb, SensorOutWithMeasurements
+from .models import MeasurementDb, MeasurementOut, SegmentDb, SensorIn, SensorDb, SensorOutWithMeasurements
 
 def create_sensor(session: Session, sensor_in: SensorIn):
+    segment = session.get(SegmentDb, sensor_in.segment_id)
+
+    if not segment:
+        raise HTTPException(
+            detail='Segment not found',
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+
     sensor = SensorDb.model_validate(sensor_in)
     session.add(sensor)
     session.commit()
