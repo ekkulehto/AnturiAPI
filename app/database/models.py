@@ -33,7 +33,7 @@ class SensorOutWithMeasurements(SQLModel):
     id: int
     name: str
     status: SensorStatus
-    measurements: list['MeasurementOut'] = []
+    measurements: list['MeasurementOut'] = Field(default_factory=list)
 
 class SensorDb(SensorBase, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -103,7 +103,7 @@ class SegmentOut(SQLModel):
 class SegmentOutWithSensors(SQLModel):
     id: int
     name: str
-    sensors: list['SensorOutWithMeasurements'] = []
+    sensors: list['SensorOutWithMeasurements'] = Field(default_factory=list)
 
 class SegmentDb(SegmentBase, table=True):
     id: int = Field(default=None, primary_key=True)
