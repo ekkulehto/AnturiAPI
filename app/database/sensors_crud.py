@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 from app.schemas.sensors import SensorUpdate
 
 from ..schemas.filters import MeasurementFilter
-from .models import MeasurementDb, MeasurementOut, SegmentDb, SensorIn, SensorDb, SensorOutWithMeasurements, SensorStatus, SensorStatusDb
+from .models import MeasurementDb, MeasurementOut, SegmentDb, SensorIn, SensorDb, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus, SensorStatusDb, SensorStatusOut
 
 def create_sensor(session: Session, sensor_in: SensorIn):
     segment = session.get(SegmentDb, sensor_in.segment_id)
@@ -18,7 +18,7 @@ def create_sensor(session: Session, sensor_in: SensorIn):
     
     new_sensor = SensorDb.model_validate(sensor_in)
 
-    sensor_status = SensorStatusDb(status=SensorStatus.NORMAL ,sensor=new_sensor)
+    sensor_status = SensorStatusDb(status=SensorStatus.NORMAL, sensor=new_sensor)
     
     session.add(new_sensor)
     session.add(sensor_status)
@@ -27,11 +27,11 @@ def create_sensor(session: Session, sensor_in: SensorIn):
 
     return new_sensor
 
-def get_all_sensors(session: Session, status: SensorStatus | None = None):
+def get_all_sensors(session: Session, sensor_status: SensorStatus | None = None):
     query = select(SensorDb)
 
-    if status is not None:
-        query = query.where(SensorDb.status == status)
+    if sensor_status is not None:
+        query = query.where(SensorDb.status == sensor_status)
 
     return session.exec(query).all()
 
@@ -64,6 +64,30 @@ def get_sensor_by_id(session: Session, sensor_id: int, filters: MeasurementFilte
         name=sensor.name,
         status=sensor.status,
         measurements=measurements_out
+    )
+
+def get_sensor_status_history_by_id(session: Session, sensor_id: int, sensor_status: SensorStatus | None = None):
+    sensor = session.get(SensorDb, sensor_id)
+
+    if not sensor:
+        raise HTTPException(
+            detail='Sensor not found',
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+    
+    query = select(SensorStatusDb).where(SensorStatusDb.sensor_id == sensor_id)
+    query = query.order_by(SensorStatusDb.timestamp.desc())
+    
+    if sensor_status is not None:
+        query = query.where(SensorStatusDb.status == sensor_status)
+
+    sensor_status_db = session.exec(query).all()
+    sensor_status_out = [SensorStatusOut.model_validate(status) for status in sensor_status_db]
+
+    return SensorOutWithStatusHistory(
+        id=sensor_id,
+        name=sensor.name,
+        status_history=sensor_status_out
     )
 
 def update_sensor_by_id(session: Session, sensor_id: int, sensor_update: SensorUpdate):
