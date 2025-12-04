@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException, Response, status
 from sqlmodel import Session, select
 
-from app.schemas.sensors import SensorUpdate
+from app.schemas.sensors import SensorStatusUpdate, SensorUpdate
 
 from ..schemas.filters import MeasurementFilter
 from .models import MeasurementDb, MeasurementOut, SegmentDb, SensorIn, SensorDb, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus, SensorStatusDb, SensorStatusOut
@@ -17,12 +17,16 @@ def create_sensor(session: Session, sensor_in: SensorIn):
         )
     
     new_sensor = SensorDb.model_validate(sensor_in)
-
-    sensor_status = SensorStatusDb(status=SensorStatus.NORMAL, sensor=new_sensor)
-    
     session.add(new_sensor)
-    session.add(sensor_status)
     session.commit()
+    session.refresh(new_sensor)
+
+    change_sensor_status(
+        session=session,
+        sensor_id=new_sensor.id,
+        update_sensor_status=SensorStatusUpdate(status=SensorStatus.NORMAL)
+    )
+
     session.refresh(new_sensor)
 
     return new_sensor
@@ -90,6 +94,29 @@ def get_sensor_status_history_by_id(session: Session, sensor_id: int, sensor_sta
         name=sensor.name,
         status_history=sensor_status_out,
     )
+
+def change_sensor_status(session: Session, sensor_id: int, sensor_status_update: SensorStatusUpdate):
+    existing_sensor = session.get(SensorDb, sensor_id)
+
+    if not existing_sensor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Sensor not found'
+        )
+    
+    sensor_status_db = SensorStatusDb(
+        status=sensor_status_update.status,
+        sensor=existing_sensor
+    )
+
+    session.add(sensor_status_db)
+
+    existing_sensor.status = sensor_status_update.status
+    session.add(existing_sensor)
+    session.commit()
+    session.refresh(existing_sensor)
+
+    return SensorStatusOut.model_validate(sensor_status_db)
 
 def update_sensor_by_id(session: Session, sensor_id: int, sensor_update: SensorUpdate):
     sensor = session.get(SensorDb, sensor_id)

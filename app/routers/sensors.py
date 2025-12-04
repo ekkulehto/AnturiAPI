@@ -2,13 +2,13 @@ from typing import Annotated
 from fastapi import APIRouter, Query, status, Depends
 from sqlmodel import Session
 
-from app.schemas.sensors import SensorUpdate
+from app.schemas.sensors import SensorStatusUpdate, SensorUpdate
 
 from ..schemas.filters import MeasurementFilter
 from ..database.database import get_session
 
 from ..database import sensors_crud as crud
-from ..database.models import SensorIn, SensorDb, SensorOut, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus
+from ..database.models import SensorIn, SensorDb, SensorOut, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus, SensorStatusOut
 
 router = APIRouter(prefix='/sensors', tags=['sensors'])
 
@@ -29,6 +29,10 @@ def get_sensor_status_history_by_id(*, session: Session = Depends(get_session), 
     description='Filter sensor status history by status'
 )):
     return crud.get_sensor_status_history_by_id(session, sensor_id, sensor_status)
+
+@router.post('/{sensor_id}/status', response_model=SensorStatusOut, status_code=status.HTTP_202_ACCEPTED)
+def change_sensor_status(*, session: Session = Depends(get_session), sensor_id: int, sensor_status_update: SensorStatusUpdate):
+    return crud.change_sensor_status(session, sensor_id, sensor_status_update)
 
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=SensorDb)
 def create_sensor(*, session: Session = Depends(get_session), sensor_in: SensorIn):

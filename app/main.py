@@ -11,6 +11,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(sensors.router)
-app.include_router(sensor_statuses.router)
+# app.include_router(sensor_statuses.router)
 app.include_router(measurements.router)
 app.include_router(segments.router)
