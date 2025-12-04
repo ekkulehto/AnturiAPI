@@ -11,7 +11,7 @@ router = APIRouter(prefix='/sensor_statuses', tags=['sensor_statuses'])
 def get_all_sensor_statuses(*, session: Session = Depends(get_session)):
     return crud.get_all_sensor_statuses(session)
 
-@router.get('/{sensor_statuses}', response_model=SensorStatusDb)
+@router.get('/{sensor_status_id}', response_model=SensorStatusDb)
 def get_sensor_status_by_id(*, session: Session = Depends(get_session), sensor_status_id: int):
     return crud.get_sensor_status_by_id(session, sensor_status_id)
 
