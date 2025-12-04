@@ -51,9 +51,15 @@ class SensorDb(SensorBase, table=True):
     id: int = Field(default=None, primary_key=True)
     status: SensorStatus = SensorStatus.NORMAL
     segment_id: int = Field(foreign_key='segmentdb.id', nullable=False)
-    measurements: list['MeasurementDb'] = Relationship(back_populates='sensor')
     segment: Optional['SegmentDb'] = Relationship(back_populates='sensors')
-    status_history: list['SensorStatusDb'] = Relationship(back_populates='sensor')
+    measurements: list['MeasurementDb'] = Relationship(
+        back_populates='sensor',
+        sa_relationship_kwargs={'cascade': 'all, delete-orphan'}
+        )
+    status_history: list['SensorStatusDb'] = Relationship(
+        back_populates='sensor',
+        sa_relationship_kwargs={'cascade': 'all, delete-orphan'}
+        )
 
 # =================================================================================
 #    Sensor status model
