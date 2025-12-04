@@ -8,20 +8,27 @@ from ..schemas.filters import MeasurementFilter
 from ..database.database import get_session
 
 from ..database import sensors_crud as crud
-from ..database.models import SensorIn, SensorDb, SensorOut, SensorOutWithMeasurements, SensorStatus
+from ..database.models import SensorIn, SensorDb, SensorOut, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus
 
 router = APIRouter(prefix='/sensors', tags=['sensors'])
 
 @router.get('', response_model=list[SensorOut])
-def get_all_sensors(*, session: Session = Depends(get_session), status: SensorStatus | None = Query(
+def get_all_sensors(*, session: Session = Depends(get_session), sensor_status: SensorStatus | None = Query(
     default=None,
     description='Filter sensors by current status'
 )):
-    return crud.get_all_sensors(session, status)
+    return crud.get_all_sensors(session, sensor_status)
 
 @router.get('/{sensor_id}', response_model=SensorOutWithMeasurements)
 def get_sensor_by_id(*, session: Session = Depends(get_session), sensor_id: int, filters: Annotated[MeasurementFilter, Query()]):
     return crud.get_sensor_by_id(session, sensor_id, filters)
+
+@router.get('/{sensor_id}/status_history', response_model=SensorOutWithStatusHistory)
+def get_sensor_status_history_by_id(*, session: Session = Depends(get_session), sensor_id: int, sensor_status: SensorStatus | None = Query(
+    default=None,
+    description='Filter sensor status history by status'
+)):
+    return crud.get_sensor_status_history_by_id(session, sensor_id, sensor_status)
 
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=SensorDb)
 def create_sensor(*, session: Session = Depends(get_session), sensor_in: SensorIn):
