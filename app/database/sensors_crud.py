@@ -9,7 +9,6 @@ from .models import (
     SegmentDb, 
     SensorIn, 
     SensorDb,
-    SensorOut, 
     SensorOutWithMeasurements, 
     SensorOutWithStatusHistory, 
     SensorStatus, 
