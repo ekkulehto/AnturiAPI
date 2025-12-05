@@ -14,21 +14,42 @@ def get_all_measurements(session: Session):
     return [
         MeasurementOutWithSensor(
             sensor_id=measurement.sensor_id,
-            measurement=MeasurementOut.model_validate(measurement)
+            measurement=MeasurementOut(
+                id=measurement.id,
+                type=measurement.type,
+                unit=measurement.unit,
+                value=measurement.value,
+                timestamp=measurement.timestamp
+            )
         )
         for measurement in measurements_db
     ]
 
 def create_measurement(session: Session, measurement_in: MeasurementIn):
-    measurement = MeasurementDb.model_validate(measurement_in)
+    payload = measurement_in.measurement
+
+    measurement = MeasurementDb(
+        sensor_id=measurement_in.sensor_id,
+        timestamp=payload.timestamp,
+        type=payload.type,
+        unit=payload.unit,
+        value=payload.value,
+    )
+
     session.add(measurement)
     session.commit()
     session.refresh(measurement)
 
     return MeasurementOutWithSensor(
-        sensor_id=measurement.sensor_id,
-        measurement=MeasurementOut.model_validate(measurement)
-        )
+        sensor_id=measurement_in.sensor_id,
+        measurement=MeasurementOut(
+            id=measurement.id,
+            type=payload.type,
+            unit=payload.unit,
+            value=payload.value,
+            timestamp=payload.timestamp,
+        ),
+    )
 
 def get_measurement_by_id(session: Session, measurement_id: int):
     measurement = session.get(MeasurementDb, measurement_id)
@@ -40,8 +61,14 @@ def get_measurement_by_id(session: Session, measurement_id: int):
         )
     
     return MeasurementOutWithSensor(
-        sensor_id=measurement.sensor_id,
-        measurement=MeasurementOut.model_validate(measurement)
+            sensor_id=measurement.sensor_id,
+            measurement=MeasurementOut(
+                id=measurement.id,
+                type=measurement.type,
+                unit=measurement.unit,
+                value=measurement.value,
+                timestamp=measurement.timestamp,
+            )
         )
 
 def delete_measurement_by_id(session: Session, measurement_id: int):
