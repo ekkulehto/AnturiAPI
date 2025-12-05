@@ -19,9 +19,21 @@ def get_all_sensors(*, session: Session = Depends(get_session), sensor_status: S
 )):
     return crud.get_all_sensors(session, sensor_status)
 
+@router.post('', status_code=status.HTTP_201_CREATED, response_model=SensorOut)
+def create_sensor(*, session: Session = Depends(get_session), sensor_in: SensorIn):
+    return crud.create_sensor(session, sensor_in)
+
 @router.get('/{sensor_id}', response_model=SensorOutWithMeasurements)
 def get_sensor_by_id(*, session: Session = Depends(get_session), sensor_id: int, filters: Annotated[MeasurementFilter, Query()]):
     return crud.get_sensor_by_id(session, sensor_id, filters)
+
+@router.patch('/{sensor_id}', response_model=SensorOut)
+def update_sensor_by_id(*, session: Session = Depends(get_session), sensor_id: int, sensor_update: SensorUpdate):
+    return crud.update_sensor_by_id(session, sensor_id, sensor_update)
+
+@router.delete('/{sensor_id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_sensor_by_id(*, session: Session = Depends(get_session), sensor_id: int):
+    return crud.delete_sensor_by_id(session, sensor_id)
 
 @router.get('/{sensor_id}/status_history', response_model=SensorOutWithStatusHistory)
 def get_sensor_status_history_by_id(*, session: Session = Depends(get_session), sensor_id: int, sensor_status: SensorStatus | None = Query(
@@ -34,14 +46,3 @@ def get_sensor_status_history_by_id(*, session: Session = Depends(get_session), 
 def change_sensor_status(*, session: Session = Depends(get_session), sensor_id: int, sensor_status_update: SensorStatusUpdate):
     return crud.change_sensor_status(session, sensor_id, sensor_status_update)
 
-@router.post('', status_code=status.HTTP_201_CREATED, response_model=SensorOut)
-def create_sensor(*, session: Session = Depends(get_session), sensor_in: SensorIn):
-    return crud.create_sensor(session, sensor_in)
-
-@router.patch('/{sensor_id}', response_model=SensorOut)
-def update_sensor_by_id(*, session: Session = Depends(get_session), sensor_id: int, sensor_update: SensorUpdate):
-    return crud.update_sensor_by_id(session, sensor_id, sensor_update)
-
-@router.delete('/{sensor_id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_sensor_by_id(*, session: Session = Depends(get_session), sensor_id: int):
-    return crud.delete_sensor_by_id(session, sensor_id)

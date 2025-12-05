@@ -6,6 +6,14 @@ from app.schemas.sensors import SensorStatusUpdate, SensorUpdate
 from ..schemas.filters import MeasurementFilter
 from .models import MeasurementDb, MeasurementOut, SegmentDb, SensorIn, SensorDb, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus, SensorStatusDb, SensorStatusOut
 
+def get_all_sensors(session: Session, sensor_status: SensorStatus | None = None):
+    query = select(SensorDb)
+
+    if sensor_status is not None:
+        query = query.where(SensorDb.status == sensor_status)
+
+    return session.exec(query).all()
+
 def create_sensor(session: Session, sensor_in: SensorIn):
     segment = session.get(SegmentDb, sensor_in.segment_id)
 
@@ -29,14 +37,6 @@ def create_sensor(session: Session, sensor_in: SensorIn):
     session.refresh(new_sensor)
 
     return new_sensor
-
-def get_all_sensors(session: Session, sensor_status: SensorStatus | None = None):
-    query = select(SensorDb)
-
-    if sensor_status is not None:
-        query = query.where(SensorDb.status == sensor_status)
-
-    return session.exec(query).all()
 
 def get_sensor_by_id(session: Session, sensor_id: int, filters: MeasurementFilter):
     sensor = session.get(SensorDb, sensor_id)
@@ -69,6 +69,46 @@ def get_sensor_by_id(session: Session, sensor_id: int, filters: MeasurementFilte
         segment=sensor.segment,
         measurements=measurements_out
     )
+
+def update_sensor_by_id(session: Session, sensor_id: int, sensor_update: SensorUpdate):
+    sensor = session.get(SensorDb, sensor_id)
+
+    if not sensor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Sensor not found'
+        )
+    
+    if sensor_update.name is not None:
+        sensor.name = sensor_update.name
+    
+    if sensor_update.segment_id is not None:
+        new_segment = session.get(SegmentDb, sensor_update.segment_id)
+
+        if not new_segment:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='Segment not found'
+            )
+
+        sensor.segment_id = sensor_update.segment_id
+    
+    session.add(sensor)
+    session.commit()
+    session.refresh(sensor)
+    return sensor
+
+def delete_sensor_by_id(session: Session, sensor_id: int):
+    sensor = session.get(SensorDb, sensor_id)
+
+    if not sensor:
+        raise HTTPException(
+            detail='Sensor not found',
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+    
+    session.delete(sensor)
+    session.commit()
 
 def get_sensor_status_history_by_id(session: Session, sensor_id: int, sensor_status: SensorStatus | None = None):
     sensor = session.get(SensorDb, sensor_id)
@@ -117,43 +157,3 @@ def change_sensor_status(session: Session, sensor_id: int, sensor_status_update:
     session.refresh(existing_sensor)
 
     return SensorStatusOut.model_validate(sensor_status_db)
-
-def update_sensor_by_id(session: Session, sensor_id: int, sensor_update: SensorUpdate):
-    sensor = session.get(SensorDb, sensor_id)
-
-    if not sensor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Sensor not found'
-        )
-    
-    if sensor_update.name is not None:
-        sensor.name = sensor_update.name
-    
-    if sensor_update.segment_id is not None:
-        new_segment = session.get(SegmentDb, sensor_update.segment_id)
-
-        if not new_segment:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='Segment not found'
-            )
-
-        sensor.segment_id = sensor_update.segment_id
-    
-    session.add(sensor)
-    session.commit()
-    session.refresh(sensor)
-    return sensor
-
-def delete_sensor_by_id(session: Session, sensor_id: int):
-    sensor = session.get(SensorDb, sensor_id)
-
-    if not sensor:
-        raise HTTPException(
-            detail='Sensor not found',
-            status_code=status.HTTP_404_NOT_FOUND
-        )
-    
-    session.delete(sensor)
-    session.commit()
