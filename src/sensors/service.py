@@ -2,11 +2,7 @@ from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
 from .schemas import SensorStatusUpdate, SensorUpdate
-from ..measurements.schemas import MeasurementFilter
 from .models import (
-    MeasurementDb, 
-    MeasurementOut, 
-    SegmentDb, 
     SensorIn, 
     SensorDb,
     SensorOutWithMeasurements, 
@@ -16,6 +12,7 @@ from .models import (
     SensorStatusOut
 )
 
+from ..measurements.schemas import MeasurementFilter
 from ..measurements.models import (
     MeasurementDb, 
     MeasurementOut, 
