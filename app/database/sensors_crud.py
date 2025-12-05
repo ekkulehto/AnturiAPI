@@ -2,9 +2,19 @@ from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
 from app.schemas.sensors import SensorStatusUpdate, SensorUpdate
-
 from ..schemas.filters import MeasurementFilter
-from .models import MeasurementDb, MeasurementOut, SegmentDb, SensorIn, SensorDb, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus, SensorStatusDb, SensorStatusOut
+from .models import (
+    MeasurementDb, 
+    MeasurementOut, 
+    SegmentDb, 
+    SensorIn, 
+    SensorDb, 
+    SensorOutWithMeasurements, 
+    SensorOutWithStatusHistory, 
+    SensorStatus, 
+    SensorStatusDb, 
+    SensorStatusOut
+)
 
 def get_all_sensors(session: Session, sensor_status: SensorStatus | None = None):
     query = select(SensorDb)
