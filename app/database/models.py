@@ -104,6 +104,10 @@ class MeasurementOut(SQLModel):
     temperature: float
     timestamp: datetime
 
+class MeasurementOutWithSensor(SQLModel):
+    sensor_id: int
+    measurement: 'MeasurementOut'
+
 class MeasurementDb(MeasurementBase, table=True):
     id: int = Field(default=None, primary_key=True)
     sensor_id: int = Field(foreign_key='sensordb.id')
