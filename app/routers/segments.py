@@ -13,13 +13,13 @@ router = APIRouter(prefix='/segments', tags=['Segments'])
 def get_all_segments(*, session: Session = Depends(get_session)):
     return crud.get_all_segments(session)
 
-@router.get('/{segment_id}', response_model=SegmentOutWithSensors)
-def get_segment_by_id(*, session: Session = Depends(get_session), segment_id: int):
-    return crud.get_segment_by_id(session, segment_id)
-
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=SegmentOut)
 def create_segment(*, session: Session = Depends(get_session), segment_in: SegmentIn):
     return crud.create_segment(session, segment_in)
+
+@router.get('/{segment_id}', response_model=SegmentOutWithSensors)
+def get_segment_by_id(*, session: Session = Depends(get_session), segment_id: int):
+    return crud.get_segment_by_id(session, segment_id)
 
 @router.patch('/{segment_id}', response_model=SegmentOut)
 def update_segment_by_id(*, session: Session = Depends(get_session), segment_id:int, segment_update: SegmentUpdate):

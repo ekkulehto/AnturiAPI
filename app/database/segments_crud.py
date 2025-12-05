@@ -4,15 +4,15 @@ from sqlmodel import Session, select
 from app.schemas.segments import SegmentUpdate
 from .models import MeasurementDb, MeasurementOut, SegmentIn, SegmentDb, SegmentOutWithSensors, SensorOutWithLastMeasurement
 
+def get_all_segments(session: Session):
+    return session.exec(select(SegmentDb)).all()
+
 def create_segment(session: Session, segment_in: SegmentIn):
     segment = SegmentDb.model_validate(segment_in)
     session.add(segment)
     session.commit()
     session.refresh(segment)
     return segment
-
-def get_all_segments(session: Session):
-    return session.exec(select(SegmentDb)).all()
 
 def get_segment_by_id(session: Session, segment_id: int):
     segment = session.get(SegmentDb, segment_id)
