@@ -45,6 +45,7 @@ class SensorOutWithLastMeasurement(SQLModel):
 class SensorOutWithStatusHistory(SQLModel):
     id: int
     name: str
+    segment: 'SegmentOut'
     status_history: list['SensorStatusOut'] = Field(default_factory=list)
 
 class SensorDb(SensorBase, table=True):
