@@ -89,31 +89,39 @@ class SensorStatusDb(SensorStatusBase, table=True):
 
 class MeasurementBase(SQLModel):
     sensor_id: int
-    temperature: float
+
+class MeasurementPayload(SQLModel):
+    value: float
+    unit: str = 'CELSIUS'
+    type: str = 'TEMPERATURE'
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    @field_validator('temperature')
+    @field_validator('value')
     @classmethod
-    def round_temperature_to_one_decimal(cls, temperature: float) -> float:
-        return round(temperature, 1)
+    def round_value_to_one_decimal(cls, value: float) -> float:
+        return round(value, 1)
 
 class MeasurementIn(MeasurementBase):
-    pass
+    measurement: 'MeasurementPayload'
 
 class MeasurementOut(SQLModel):
     id: int
-    temperature: float
+    value: float
+    unit: str
+    type: str
     timestamp: datetime
 
-class MeasurementOutWithSensor(SQLModel):
-    sensor_id: int
+class MeasurementOutWithSensor(MeasurementBase):
     measurement: 'MeasurementOut'
 
 class MeasurementDb(MeasurementBase, table=True):
     id: int = Field(default=None, primary_key=True)
     sensor_id: int = Field(foreign_key='sensordb.id')
     sensor: Optional['SensorDb'] = Relationship(back_populates='measurements')
-
+    timestamp: datetime
+    type: str
+    unit: str
+    value: float
 
 # =================================================================================
 #    Segments
