@@ -8,7 +8,7 @@ from ..schemas.filters import MeasurementFilter
 from ..database.database import get_session
 
 from ..database import sensors_crud as crud
-from ..database.models import SensorIn, SensorDb, SensorOut, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus, SensorStatusOut
+from ..database.models import SensorIn, SensorOut, SensorOutWithMeasurements, SensorOutWithStatusHistory, SensorStatus
 
 router = APIRouter(prefix='/sensors', tags=['Sensors'])
 

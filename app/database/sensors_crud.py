@@ -1,5 +1,4 @@
-from datetime import datetime, timezone
-from fastapi import HTTPException, Response, status
+from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
 from app.schemas.sensors import SensorStatusUpdate, SensorUpdate
