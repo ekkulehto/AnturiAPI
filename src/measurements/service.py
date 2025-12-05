@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
-from .models import (
+from ..database.models import (
     MeasurementIn, 
     MeasurementDb, 
     MeasurementOut, 
