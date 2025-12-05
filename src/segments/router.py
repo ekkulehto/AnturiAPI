@@ -1,8 +1,8 @@
 from fastapi import APIRouter, status, Depends
 from sqlmodel import Session
 
-from app.schemas.segments import SegmentUpdate
-from ..database.database import get_session
+from src.schemas.segments import SegmentUpdate
+from ..database import get_session
 from ..database import segments_crud as crud
 from ..database.models import SegmentIn, SegmentOut, SegmentOutWithSensors
 
