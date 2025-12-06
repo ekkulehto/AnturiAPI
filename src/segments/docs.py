@@ -24,9 +24,9 @@ CREATE_SEGMENT_DESCRIPTION = (
 
 GET_SEGMENT_BY_ID_SUMMARY = 'Get a segment by ID'
 GET_SEGMENT_BY_ID_DESCRIPTION = (
-    'Fetch a single segment by its unique ID. '
-    'Includes the segment information and any sensors assigned to it, with their latest '
-    'measurements if available.'
+    'Return a segment with its sensors and their measurements. '
+    'By default, only the latest measurement per sensor is included, but this can be '
+    'customised using query parameters (limit, measurement type, and time range).'
 )
 
 # =================================================================================
