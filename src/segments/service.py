@@ -11,8 +11,16 @@ from ..models import (
     MeasurementOut, 
 )
 
+# =================================================================================
+#    GET ALL SEGMENTS
+# =================================================================================
+
 def get_all_segments(session: Session):
     return session.exec(select(SegmentDb)).all()
+
+# =================================================================================
+#    CREATE NEW SEGMENT
+# =================================================================================
 
 def create_segment(session: Session, segment_in: SegmentIn):
     segment = SegmentDb.model_validate(segment_in)
@@ -20,6 +28,10 @@ def create_segment(session: Session, segment_in: SegmentIn):
     session.commit()
     session.refresh(segment)
     return segment
+
+# =================================================================================
+#    GET SEGMENT BY ID
+# =================================================================================
 
 def get_segment_by_id(session: Session, segment_id: int):
     segment = session.get(SegmentDb, segment_id)
@@ -60,6 +72,10 @@ def get_segment_by_id(session: Session, segment_id: int):
         sensors=sensors_out
     )
 
+# =================================================================================
+#    UPDATE SEGMENT BY ID
+# =================================================================================
+
 def update_segment_by_id(session: Session, segment_id: int, segment_update: SegmentUpdate):
     segment = session.get(SegmentDb, segment_id)
 
@@ -76,6 +92,10 @@ def update_segment_by_id(session: Session, segment_id: int, segment_update: Segm
     session.commit()
     session.refresh(segment)
     return segment
+
+# =================================================================================
+#    DELETE SEGMENT BY ID
+# =================================================================================
 
 def delete_segment_by_id(session: Session, segment_id: int):
     segment = session.get(SegmentDb, segment_id)
