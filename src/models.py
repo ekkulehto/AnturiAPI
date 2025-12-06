@@ -12,6 +12,12 @@ class SensorStatus(str, Enum):
     NORMAL = "NORMAL"
     ERROR = "ERROR"
 
+class MeasurementType(str, Enum):
+    TEMPERATURE = 'TEMPERATURE'
+
+class MeasurementUnit(str, Enum):
+    CELSIUS = 'CELSIUS'
+
 # =================================================================================
 #    SENSORS
 # =================================================================================
@@ -92,8 +98,8 @@ class MeasurementBase(SQLModel):
 
 class MeasurementPayload(SQLModel):
     value: float
-    unit: str = 'CELSIUS'
-    type: str = 'TEMPERATURE'
+    unit: MeasurementUnit = Field(default=MeasurementUnit.CELSIUS)
+    type: MeasurementType = Field(default=MeasurementType.TEMPERATURE)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     @field_validator('value')
@@ -118,10 +124,10 @@ class MeasurementDb(MeasurementBase, table=True):
     id: int = Field(default=None, primary_key=True)
     sensor_id: int = Field(foreign_key='sensordb.id')
     sensor: Optional['SensorDb'] = Relationship(back_populates='measurements')
-    timestamp: datetime
-    type: str
-    unit: str
     value: float
+    unit: MeasurementUnit
+    type: MeasurementType
+    timestamp: datetime
 
 # =================================================================================
 #    SEGMENTS
