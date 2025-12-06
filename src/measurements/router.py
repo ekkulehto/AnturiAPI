@@ -1,13 +1,14 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, Query, status, Depends
 from sqlmodel import Session
 
 from ..database import get_session
 from ..measurements import service as crud
-from ..models import MeasurementIn, MeasurementOutWithSensor
+from ..models import MeasurementIn, MeasurementOutWithSensor, MeasurementType
 
 from .docs import (
     GET_ALL_MEASUREMENTS_DESCRIPTION, 
     GET_ALL_MEASUREMENTS_SUMMARY,
+    GET_ALL_MEASUREMENTS_TYPE_FILTER_DESCRIPTION,
     CREATE_MEASUREMENT_SUMMARY,
     CREATE_MEASUREMENT_DESCRIPTION,
     GET_MEASUREMENT_BY_ID_SUMMARY,
@@ -30,9 +31,13 @@ router = APIRouter(prefix='/measurements', tags=['Measurements'])
 )
 def get_all_measurements(
     *, 
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    measurement_type: MeasurementType | None = Query(
+        default=None,
+        description=GET_ALL_MEASUREMENTS_TYPE_FILTER_DESCRIPTION
+    )
 ):
-    return crud.get_all_measurements(session)
+    return crud.get_all_measurements(session, measurement_type)
 
 # =================================================================================
 #    CREATE NEW MEASUREMENT
