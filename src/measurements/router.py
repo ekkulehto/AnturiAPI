@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, status, Depends
+from fastapi import APIRouter, Path, Query, status, Depends
 from sqlmodel import Session
 
 from ..database import get_session
@@ -70,7 +70,7 @@ def create_measurement(
 def get_measurement_by_id(
     *, 
     session: Session = Depends(get_session), 
-    measurement_id: int
+    measurement_id: int = Path(..., description='Unique identifier of the measurement to retrieve'),
 ):
     return crud.get_measurement_by_id(session, measurement_id)
 
@@ -87,6 +87,6 @@ def get_measurement_by_id(
 def delete_measurement_by_id(
     *, 
     session: Session = Depends(get_session), 
-    measurement_id: int
+    measurement_id: int = Path(..., description='Unique identifier of the measurement to delete'),
 ):
     return crud.delete_measurement_by_id(session, measurement_id)

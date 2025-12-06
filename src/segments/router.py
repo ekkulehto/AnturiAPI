@@ -88,7 +88,7 @@ def get_segment_by_id(
 def update_segment_by_id(
     *, 
     session: Session = Depends(get_session), 
-    segment_id: int, 
+    segment_id: int = Path(..., description='Unique identifier of the segment to update'), 
     segment_update: SegmentUpdate
 ):
     return crud.update_segment_by_id(session, segment_id, segment_update)
@@ -106,6 +106,6 @@ def update_segment_by_id(
 def delete_segment_by_id(
     *, 
     session: Session = Depends(get_session), 
-    segment_id: int
+    segment_id: int = Path(..., description='Unique identifier of the segment to delete'), 
 ):
     return crud.delete_segment_by_id(session, segment_id)

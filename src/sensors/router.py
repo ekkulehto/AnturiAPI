@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Query, status, Depends
+from fastapi import APIRouter, Path, Query, status, Depends
 from sqlmodel import Session
 
 from ..database import get_session
@@ -84,7 +84,7 @@ def create_sensor(
 )
 def get_sensor_by_id(
     *, session: Session = Depends(get_session), 
-    sensor_id: int, 
+    sensor_id: int = Path(..., description='Unique identifier of the sensor to retrieve'), 
     filters: Annotated[MeasurementFilterForGetSensorById, Query()]
 ):
     return crud.get_sensor_by_id(session, sensor_id, filters)
@@ -102,7 +102,7 @@ def get_sensor_by_id(
 def update_sensor_by_id(
     *, 
     session: Session = Depends(get_session), 
-    sensor_id: int, 
+    sensor_id: int = Path(..., description='Unique identifier of the sensor to update'), 
     sensor_update: SensorUpdate
 ):
     return crud.update_sensor_by_id(session, sensor_id, sensor_update)
@@ -120,7 +120,7 @@ def update_sensor_by_id(
 def delete_sensor_by_id(
     *, 
     session: Session = Depends(get_session), 
-    sensor_id: int
+    sensor_id: int = Path(..., description='Unique identifier of the sensor to delete'),
 ):
     return crud.delete_sensor_by_id(session, sensor_id)
 
@@ -137,7 +137,7 @@ def delete_sensor_by_id(
 def get_sensor_status_history_by_id(
     *, 
     session: Session = Depends(get_session), 
-    sensor_id: int, 
+    sensor_id: int = Path(..., description='Unique identifier of the sensor whose status history to retrieve'),
     sensor_status: SensorStatus | None = Query(
     default=None,
     description=GET_SENSOR_STATUS_HISTORY_BY_ID_FILTER_DESCRIPTION
@@ -158,7 +158,7 @@ def get_sensor_status_history_by_id(
 def change_sensor_status_by_id(
     *, 
     session: Session = Depends(get_session), 
-    sensor_id: int, 
+    sensor_id: int = Path(..., description='Unique identifier of the sensor whose status to update'), 
     sensor_status_update: SensorStatusUpdate
 ):
     return crud.change_sensor_status_by_id(session, sensor_id, sensor_status_update)
