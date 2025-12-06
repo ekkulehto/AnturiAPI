@@ -3,6 +3,10 @@ GET_ALL_MEASUREMENTS_DESCRIPTION = (
     'Return all measurements stored in the system for all sensors. '
     'Mainly intended for debugging, testing, or simple data views.'
 )
+GET_ALL_MEASUREMENTS_TYPE_FILTER_DESCRIPTION = (
+    'Optional filter for measurement type. '
+    'If omitted, measurements of all types are returned.'
+)
 
 CREATE_MEASUREMENT_SUMMARY = 'Create a new measurement'
 CREATE_MEASUREMENT_DESCRIPTION = (
