@@ -4,7 +4,8 @@ from sqlmodel import Session, select
 from .schemas import SegmentUpdate
 from ..models import (
     SegmentIn, 
-    SegmentDb, 
+    SegmentDb,
+    SegmentOutWithNumberOfSensors, 
     SegmentOutWithSensors, 
     SensorOutWithLastMeasurement,
     MeasurementDb, 
@@ -16,7 +17,16 @@ from ..models import (
 # =================================================================================
 
 def get_all_segments(session: Session):
-    return session.exec(select(SegmentDb)).all()
+    segments_db = session.exec(select(SegmentDb)).all()
+
+    return [
+        SegmentOutWithNumberOfSensors(
+            id=segment.id,
+            name= segment.name,
+            number_of_sensors=len(segment.sensors)
+        )
+        for segment in segments_db
+    ]
 
 # =================================================================================
 #    CREATE NEW SEGMENT
