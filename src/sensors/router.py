@@ -29,8 +29,8 @@ from .docs import (
     GET_SENSOR_STATUS_HISTORY_BY_ID_SUMMARY,
     GET_SENSOR_STATUS_HISTORY_BY_ID_DESCRIPTION,
     GET_SENSOR_STATUS_HISTORY_BY_ID_FILTER_DESCRIPTION,
-    CHANGE_SENSOR_STATUS_SUMMARY,
-    CHANGE_SENSOR_STATUS_DESCRIPTION,
+    CHANGE_SENSOR_STATUS_BY_ID_SUMMARY,
+    CHANGE_SENSOR_STATUS_BY_ID_DESCRIPTION,
 )
 
 router = APIRouter(prefix='/sensors', tags=['Sensors'])
@@ -152,8 +152,8 @@ def get_sensor_status_history_by_id(
         '/{sensor_id}/status', 
         response_model=SensorOut, 
         status_code=status.HTTP_202_ACCEPTED,
-        summary=CHANGE_SENSOR_STATUS_SUMMARY,
-        description=CHANGE_SENSOR_STATUS_DESCRIPTION
+        summary=CHANGE_SENSOR_STATUS_BY_ID_SUMMARY,
+        description=CHANGE_SENSOR_STATUS_BY_ID_DESCRIPTION
 )
 def change_sensor_status_by_id(
     *, 
