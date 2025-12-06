@@ -5,15 +5,21 @@ from ..models import (
     MeasurementIn, 
     MeasurementDb, 
     MeasurementOut, 
-    MeasurementOutWithSensor
+    MeasurementOutWithSensor,
+    MeasurementType
 )
 
 # =================================================================================
 #    GET ALL SEGMENTS
 # =================================================================================
 
-def get_all_measurements(session: Session):
-    measurements_db = session.exec(select(MeasurementDb)).all()
+def get_all_measurements(session: Session, measurement_type: MeasurementType | None = None):
+    query = select(MeasurementDb)
+
+    if measurement_type is not None:
+        query = query.where(MeasurementDb.type == measurement_type)
+
+    measurements_db = session.exec(query).all()
 
     return [
         MeasurementOutWithSensor(
