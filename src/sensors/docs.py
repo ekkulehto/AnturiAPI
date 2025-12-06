@@ -14,7 +14,7 @@ CREATE_SENSOR_DESCRIPTION = (
     'The sensor is created with status NORMAL by default.'
 )
 
-GET_SENSOR_BY_ID_SUMMARY = 'Get a sensor with its measurements'
+GET_SENSOR_BY_ID_SUMMARY = 'Get a sensor with its measurements by ID'
 GET_SENSOR_BY_ID_DESCRIPTION = (
     'Fetch a single sensor by its unique ID, including its basic information and measurements. '
     'Measurements can be filtered by limit and time range (since/until).'
@@ -32,7 +32,7 @@ DELETE_SENSOR_BY_ID_DESCRIPTION = (
     'Depending on the database configuration, this may also remove its measurements.'
 )
 
-GET_SENSOR_STATUS_HISTORY_BY_ID_SUMMARY = 'Get sensor status history'
+GET_SENSOR_STATUS_HISTORY_BY_ID_SUMMARY = 'Get sensor status history by ID'
 GET_SENSOR_STATUS_HISTORY_BY_ID_DESCRIPTION = (
     'Return the status change history for a given sensor, including timestamps. '
     'This can be used, for example, to build a chart of error occurrences over time.'
@@ -42,7 +42,7 @@ GET_SENSOR_STATUS_HISTORY_BY_ID_FILTER_DESCRIPTION = (
     'If omitted, all status changes are returned.'
 )
 
-CHANGE_SENSOR_STATUS_SUMMARY = 'Change sensor status'
+CHANGE_SENSOR_STATUS_SUMMARY = 'Change sensor status by ID'
 CHANGE_SENSOR_STATUS_DESCRIPTION = (
     'Change the current status of a sensor. '
     'Each status change is recorded in the sensor status history with a timestamp.'
