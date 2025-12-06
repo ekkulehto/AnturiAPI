@@ -5,7 +5,8 @@
 GET_ALL_MEASUREMENTS_SUMMARY = 'List all measurements'
 GET_ALL_MEASUREMENTS_DESCRIPTION = (
     'Return all measurements stored in the system for all sensors. '
-    'Mainly intended for debugging, testing, or simple data views.'
+    'Mainly intended for debugging, testing, or simple data views. '
+    'Measurements can be filtered by measurement type.'
 )
 GET_ALL_MEASUREMENTS_TYPE_FILTER_DESCRIPTION = (
     'Optional filter for measurement type. '
