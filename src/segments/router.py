@@ -1,6 +1,8 @@
-from fastapi import APIRouter, status, Depends
+from typing import Annotated
+from fastapi import APIRouter, Path, Query, status, Depends
 from sqlmodel import Session
 
+from ..measurements.schemas import MeasurementFilterForGetSegmentById
 from ..database import get_session
 from .schemas import SegmentUpdate
 from ..segments import service as crud
@@ -60,17 +62,18 @@ def create_segment(
 # =================================================================================
 
 @router.get(
-        '/{segment_id}', 
-        response_model=SegmentOutWithSensors,
-        summary=GET_SEGMENT_BY_ID_SUMMARY,
-        description=GET_SEGMENT_BY_ID_DESCRIPTION
+    '/{segment_id}',
+    response_model=SegmentOutWithSensors,
+    summary=GET_SEGMENT_BY_ID_SUMMARY,
+    description=GET_SEGMENT_BY_ID_DESCRIPTION,
 )
 def get_segment_by_id(
-    *, 
-    session: Session = Depends(get_session), 
-    segment_id: int
+    *,
+    session: Session = Depends(get_session),
+    segment_id: int = Path(..., description='Unique identifier of the segment to retrieve'),
+    filters: Annotated[MeasurementFilterForGetSegmentById, Query()],
 ):
-    return crud.get_segment_by_id(session, segment_id)
+    return crud.get_segment_by_id(session, segment_id, filters)
 
 # =================================================================================
 #    UPDATE SEGMENT BY ID
