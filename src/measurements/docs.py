@@ -20,7 +20,8 @@ CREATE_MEASUREMENT_SUMMARY = 'Create a new measurement'
 CREATE_MEASUREMENT_DESCRIPTION = (
     'Store a single measurement sent by a sensor. '
     'The request must include the sensor ID and the measurement payload '
-    '(value, unit, type, and timestamp).'
+    '(value, unit, type, and timestamp). '
+    'The timestamp can be provided explicitly: if omitted, it is generated automatically by the server.'
 )
 
 # =================================================================================
