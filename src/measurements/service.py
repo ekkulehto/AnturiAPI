@@ -100,10 +100,10 @@ def create_measurement(session: Session, measurement_in: MeasurementIn):
 #    GET MEASUREMENT BY ID
 # =================================================================================
 
-def get_measurement_by_id(session: Session, measurement_id: int):
+def get_measurement_by_id(session: Session, sensor_id: int, measurement_id: int):
     measurement = session.get(MeasurementDb, measurement_id)
 
-    if not measurement:
+    if not measurement or measurement.sensor_id != sensor_id:
         raise HTTPException(
             detail='Measurement not found',
             status_code=status.HTTP_404_NOT_FOUND
@@ -124,10 +124,10 @@ def get_measurement_by_id(session: Session, measurement_id: int):
 #    DELETE MEASUREMENT BY ID
 # =================================================================================
 
-def delete_measurement_by_id(session: Session, measurement_id: int):
+def delete_measurement_by_id(session: Session, sensor_id: int, measurement_id: int):
     measurement = session.get(MeasurementDb, measurement_id)
 
-    if not measurement:
+    if not measurement or measurement.sensor_id != sensor_id:
         raise HTTPException(
             detail='Measurement not found',
             status_code=status.HTTP_404_NOT_FOUND
