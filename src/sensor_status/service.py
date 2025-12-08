@@ -52,6 +52,9 @@ def change_sensor_status_by_id(session: Session, sensor_id: int, sensor_status_u
             detail='Sensor not found'
         )
     
+    if existing_sensor.status == sensor_status_update.status:
+        return existing_sensor
+    
     sensor_status_db = SensorStatusDb(
         status=sensor_status_update.status,
         sensor=existing_sensor
