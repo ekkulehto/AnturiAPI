@@ -1,20 +1,20 @@
 # AnturiAPI
 
-AnturiAPI on REST-rajapinta kuvitteellisen tehdashallin lämpötila-anturidatan keräämiseen ja hallintaan.
+AnturiAPI on REST-rajapinta kuvitteellisen tehdashallin lämpötila-anturidatan keräämiseen ja hallintaan.  
 API on suunniteltu toimimaan taustapalveluna erilliselle web- tai mobiilikäyttöliittymälle.
 
-Nykyisessä versiossa anturit mittaavat vain lämpötilaa, mutta rajapinta on suunniteltu laajennettavaksi myös muille mittaustyypeille. Tiedonsiirrossa käytetään JSON-muotoisia viestejä ja relaatiotietokantana toimii SQLite.
+Nykyisessä versiossa anturit mittaavat vain lämpötilaa, mutta rajapinta on suunniteltavissa laajennettavaksi myös muille mittaustyypeille. Tiedonsiirrossa käytetään JSON-muotoisia viestejä ja relaatiotietokantana toimii SQLite.
 
 ---
 
 ## Tekninen toteutus
 
-*   **Kieli:** Python 3.13
-*   **Web-kehys:** FastAPI
-*   **ORM / mallit:** SQLModel
-*   **Tietokanta:** SQLite
-*   **Validointi:** Pydantic (v2)
-*   **Kehityspalvelin:** fastapi dev
+* **Kieli:** Python 3.13  
+* **Web-kehys:** FastAPI  
+* **ORM / mallit:** SQLModel  
+* **Tietokanta:** SQLite  
+* **Validointi:** Pydantic (v2)  
+* **Kehityspalvelin:** fastapi dev  
 
 API tarjoaa automaattisesti generoidun interaktiivisen dokumentaation (Swagger UI).
 
@@ -29,145 +29,394 @@ Ohjeet olettavat, että **Python 3.13** on asennettuna ja komennot ajetaan proje
 On suositeltavaa luoda eristetty ympäristö riippuvuuksille.
 
 **Windows:**
-  ```
-  python -m venv .venv
-  .venv\Scripts\activate
-  ```
+
+    python -m venv .venv
+    .venv\Scripts\activate
 
 **Linux / macOS:**
-  ```
-  python -m venv .venv
-  source .venv/bin/activate
-  ```
+
+    python -m venv .venv
+    source .venv/bin/activate
 
 ### 2. Riippuvuuksien asennus
-  ```
-  pip install -r requirements.txt
-  ```
+
+    pip install -r requirements.txt
 
 ### 3. Palvelimen käynnistys
 
 Käynnistä sovellus FastAPIn kehityskomennolla projektin juuresta:
-  ```
-  fastapi dev .\src\main.py
-  ```
-*(Huom: Linux/macOS-ympäristössä polku on ./src/main.py)*
+
+    fastapi dev .\src\main.py
+
+*(Huom: Linux/macOS-ympäristössä polku on `./src/main.py`.)*
 
 ### 4. Dokumentaation avaus ja testaus
 
 Kun palvelin on käynnissä, avaa selain ja siirry osoitteeseen:
-*   **Swagger UI:** http://127.0.0.1:8000/docs
+
+* **Swagger UI:** http://127.0.0.1:8000/docs
 
 ---
 
-## Pikaopas käyttöön (Esimerkki)
+## Pikaopas käyttöön (esimerkkivirta)
 
-Kun olet avannut Swagger UI:n, voit testata API:n toimintaa seuraavassa järjestyksessä:
+Kun olet avannut Swagger UI:n, voit testata API:n toimintaa esimerkiksi seuraavassa järjestyksessä:
 
-1.  **Luo Segmentti:**
-    *   Avaa `POST /segments`
-    *   Paina "Try it out" ja lähetä JSON: `{ "name": "LOHKO 1" }`
-    *   Tämä on välttämätöntä, koska anturi tarvitsee segmentin.
+1. **Luo Segmentti**
 
-2.  **Luo Anturi:**
-    *   Avaa `POST /sensors`
-    *   Lähetä JSON: `{ "name": "Lämpö 1", "segment_id": 1 }`
+   * Avaa `POST /segments`  
+   * Paina "Try it out" ja lähetä JSON:
 
-3.  **Lähetä Mittaus:**
-    *   Avaa `POST /measurements`
-    *   Lähetä JSON:
-        ```
-        {
-          "sensor_id": 1,
-          "measurement": {
-            "value": 22.5,
-            "unit": "CELSIUS",
-            "type": "TEMPERATURE"
-          }
-        }
-        ```
+         {
+           "name": "LOHKO_A13_13"
+         }
 
-4.  **Tarkastele dataa:**
-    *   Avaa `GET /sensors/1` nähdäksesi anturin ja sen mittaukset.
+   * Segmentti on välttämätön, koska anturi liitetään aina johonkin lohkoon.
+
+2. **Luo Anturi**
+
+   * Avaa `POST /sensors`  
+   * Lähetä JSON (oleta, että segmentin id on 1):
+
+         {
+           "name": "ANTURI_1",
+           "segment_id": 1
+         }
+
+3. **Lähetä Mittaus Anturilta**
+
+   * Avaa `POST /sensors/{sensor_id}/measurements` (esim. sensor_id = 1)  
+   * Lähetä JSON:
+
+         {
+           "value": 22.5,
+           "unit": "CELSIUS",
+           "type": "TEMPERATURE",
+           "timestamp": "2025-12-08T10:00:00Z"
+         }
+
+   * `timestamp`-kentän voi jättää myös pois, jolloin palvelin luo sen automaattisesti.
+
+4. **Tarkastele Dataa**
+
+   * Avaa `GET /sensors/1` nähdäksesi anturin perustiedot (nimi, lohko, tila).  
+   * Avaa `GET /sensors/1/measurements` nähdäksesi anturin uusimmat mittaukset.  
+   * Avaa `GET /segments/1` nähdäksesi segmentin sensoreiden tilannekuvan (tila + viimeisin mittaus per anturi).
 
 ---
 
 ## Rajapinnan resurssit
 
-API koostuu kolmesta pääresurssista:
+Swagger-dokumentaatiossa resurssit näkyvät seuraavassa järjestyksessä:
 
-### 1. Sensors (Anturit)
-Antureiden hallinta, tilatietojen päivitys ja datan haku.
+1. **Segments**  
+2. **Sensors**  
+3. **Sensor Status**  
+4. **Sensor Measurements**
 
-*   `GET /sensors`: Listaa kaikki anturit. Tukee suodatusta tilan mukaan (esim. `?status=ERROR`).
-*   `POST /sensors`: Luo uuden anturin ja liittää sen segmenttiin. Anturin poisto poistaa automaattisesti myös sen mittaukset ja tilahistorian (cascade delete).
-*   `GET /sensors/{sensor_id}`: Hakee yksittäisen anturin tiedot ja sen mittaushistorian (oletuksena 10 viimeisintä).
-*   `PATCH /sensors/{sensor_id}`: Päivittää anturin tietoja (nimi, segmentti).
-*   `DELETE /sensors/{sensor_id}`: Poistaa anturin ja kaikki sen mittaukset.
-*   `GET /sensors/{sensor_id}/status_history`: Hakee anturin tilamuutoshistorian (`NORMAL` / `ERROR ` aikaleimoineen).
-*   `POST /sensors/{sensor_id}/status`: Muuttaa anturin tilaa. Anturi ei voi lähettää mittauksia ERROR-tilassa.
+### 1. Segments (Lohkot)
 
-### 2. Measurements (Mittaukset)
-Yksittäisten mittaustulosten käsittely. Mittausarvot pyöristetään automaattisesti yhteen desimaaliin tallennuksen yhteydessä.
-
-*   `GET /measurements`: Listaa kaikki järjestelmän mittaukset.
-*   `POST /measurements`: Vastaanottaa uuden mittauksen anturilta.
-*   `GET /measurements/{measurement_id}`: Hakee yksittäisen mittauksen tiedot ID:n perusteella.
-*   `DELETE /measurements/{measurement_id}`: Poistaa yksittäisen mittauksen (esim. virheellisen datan siivous).
-
-### 3. Segments (Lohkot)
 Tehdashallin lohkojen hallinta ja niihin kuuluvien antureiden tarkastelu.
 
-*   `GET /segments`: Listaa kaikki segmentit ja niissä olevien antureiden lukumäärän.
-*   `POST /segments`: Luo uuden segmentin.
-*   `GET /segments/{segment_id}`: Hakee segmentin tiedot sekä listan sen antureista ja näiden viimeisimmistä mittauksista.
-*   `PATCH /segments/{segment_id}`: Päivittää segmentin nimen.
-*   `DELETE /segments/{segment_id}`: Poistaa segmentin. (Huom: Segmentin tulee olla tyhjä antureista ennen poistoa).
+* `GET /segments`  
+  Listaa kaikki segmentit.  
+  Vastauksessa näkyy segmenttien perustiedot (id, name).
+
+* `POST /segments`  
+  Luo uuden segmentin.
+
+      {
+        "name": "LOHKO_A13_13"
+      }
+
+* `GET /segments/{segment_id}`  
+  Hakee segmentin tiedot sekä listan sen antureista.  
+  Jokaiselle sensorille palautetaan:
+
+  * tunniste (`id`, `name`)  
+  * nykyinen tila (`status`)  
+  * viimeisin mittaus (`last_measurement`), tai `null` jos sensori ei ole vielä lähettänyt mittauksia  
+
+  Lisäksi endpoint tukee sensoreiden suodatusta nykyisen tilan perusteella:
+
+  * query-parametri `sensor_status` (esim. `NORMAL`, `ERROR`)  
+
+  Esimerkki: `GET /segments/1?sensor_status=ERROR` palauttaa vain virhetilassa olevat anturit ja niiden viimeisimmät mittaukset.
+
+* `PATCH /segments/{segment_id}`  
+  Päivittää segmentin nimen.  
+  Jos uusi nimi on sama kuin vanha tai nimeä ei anneta, segmenttiä ei kirjoiteta turhaan uudelleen tietokantaan.
+
+* `DELETE /segments/{segment_id}`  
+  Poistaa segmentin **vain jos segmentissä ei ole yhtään anturia**.  
+  Jos segmenttiin on liitetty sensoreita, rajapinta palauttaa virheen ja poisto estetään.
 
 ---
 
-## Suodatus ja haut
+### 2. Sensors (Anturit)
 
-Datanäkymiä voidaan rajata tarkemmin kyselyparametreilla (Query Parameters):
+Antureiden hallinta, tilatietojen päivitys ja hakeminen.
 
-*   **Anturin haku (`GET /sensors/{id}`):** Keskittyy aikasarjaan.
-    *   `limit`: Palautettavien mittausten määrä.
-    *   `since` / `until`: Aikavälin rajaus.
-*   **Segmentin haku (`GET /segments/{id}`):** Keskittyy tilannekuvaan.
-    *   `limit`: Palautettavien mittausten määrä per anturi.
-    *   `measurement_type`: Hae vain tietyn tyyppiset mittaukset (oletus: `TEMPERATURE`).
-    *   `since` / `until`: Aikavälin rajaus.
+* `GET /sensors`  
+  Listaa kaikki anturit.  
+  Tukee suodatusta tilan mukaan query-parametrilla `sensor_status` (esim. `?sensor_status=ERROR`).  
+  Vastauksessa näkyy ainakin anturin tunniste, nimi, segmentti ja nykyinen tila.
+
+* `POST /sensors`  
+  Luo uuden anturin ja liittää sen segmenttiin.
+
+      {
+        "name": "ANTURI_1",
+        "segment_id": 1
+      }
+
+  Uudelle sensorille asetetaan automaattisesti tila `NORMAL`, ja tilahistoriaan luodaan ensimmäinen rivi (`NORMAL` + timestamp).
+
+* `GET /sensors/{sensor_id}`  
+  Hakee yksittäisen anturin perustiedot:  
+  tunniste, nimi, segmentti, nykyinen tila (`status`).  
+  Mittaushistoria haetaan erillisellä Sensor Measurements -endpointilla.
+
+* `PATCH /sensors/{sensor_id}`  
+  Päivittää anturin tietoja (esimerkiksi nimen tai lohkon vaihtaminen).  
+  Jos päivitettävät arvot ovat samat kuin nykyiset, anturia ei kirjoiteta turhaan uudelleen tietokantaan.
+
+* `DELETE /sensors/{sensor_id}`  
+  Poistaa anturin ja kaikki siihen liittyvät mittaukset sekä tilahistorian tietokannasta  
+  (toteutettu kaskadipoistona / delete-orphan -tyyppisesti).
 
 ---
 
-## Tietomallit ja automatiikka
+### 3. Sensor Status (Anturin tila ja tilahistoria)
 
-### Anturi (Sensor)
-*   **Tila (status):** `NORMAL` (oletus) tai `ERROR`.
-*   **Toiminta:** ERROR-tilassa oleva anturi hylkää uudet mittaukset. Tila on palautettava normaaliksi rajapinnan kautta.
-*   **Relaatiot:** Anturin poisto poistaa automaattisesti myös siihen liittyvät mittaukset ja tilahistorian tietokannasta (`cascade: all, delete-orphan`).
+Anturin tilamuutokset (`NORMAL`, `ERROR`) mallinnetaan erillisenä resurssina.
 
-### Mittaus (Measurement)
-Mittausdata validoidaan automaattisesti ennen tallennusta.
-*   **Arvo (value):** Pyöristetään automaattisesti yhteen desimaaliin (esim. 24.567 -> 24.6).
-*   **Aikaleima (timestamp):** Tallennetaan UTC-ajassa. Luodaan automaattisesti, jos sitä ei anneta pyynnössä.
-*   **Yksikkö (unit) ja tyyppi (type):** Oletusarvoina `CELSIUS` ja `TEMPERATURE`, jos niitä ei määritellä erikseen.
+* `GET /sensors/{sensor_id}/status/history`  
+  Hakee anturin tilamuutoshistorian uusimmasta vanhimpaan.  
+  Jokaisella rivillä on tila (`status`) ja aikaleima (`timestamp`).  
+  Tätä dataa voidaan käyttää esimerkiksi graafin piirtämiseen virhetilanteiden esiintymisajankohdista.
 
-**Uuden mittauksen lähetysrakenne (POST):**
+* `POST /sensors/{sensor_id}/status`  
+  Muuttaa anturin nykyistä tilaa ja tallentaa muutoksen tilahistoriaan.
 
-```bash
-    {
-      "sensor_id": 1,
-      "measurement": {
+      {
+        "status": "ERROR"
+      }
+
+  Anturin ajatellaan lopettavan mittausten lähettämisen ollessaan `ERROR`-tilassa, ja tila palautetaan normaaliksi vain tämän endpointin kautta.  
+  Jos uusi tila on sama kuin nykyinen tila, status-historiaan ei lisätä uutta riviä eikä anturin statusta päivitetä turhaan uudelleen.
+
+---
+
+### 4. Sensor Measurements (Mittaukset anturikohtaisesti)
+
+Mittaukset käsitellään aina anturin aliresurssina. Mittausarvot pyöristetään automaattisesti yhteen desimaaliin tallennuksen yhteydessä.
+
+* `GET /sensors/{sensor_id}/measurements`  
+  Listaa anturin mittaukset.  
+  Oletuksena palautetaan 10 uusinta mittausta.  
+  Tukee seuraavia kyselyparametreja:
+
+  * `measurement_type` – mittaustyyppi, jos käytössä on useampia kuin yksi tyyppi  
+  * `limit` – palautettavien mittausten määrä (1–100, oletus 10)  
+  * `since` – aikavälin alku (ISO 8601 -aikaleima)  
+  * `until` – aikavälin loppu (ISO 8601 -aikaleima)  
+
+* `POST /sensors/{sensor_id}/measurements`  
+  Vastaanottaa uuden mittauksen anturilta.
+
+      {
         "value": 24.567,
         "unit": "CELSIUS",
         "type": "TEMPERATURE",
         "timestamp": "2025-12-06T19:57:12.020Z"
       }
-    }
-```
 
-*Yllä oleva esimerkki tallentuisi arvolla 24.6.*
+  Tallennusvaiheessa `value` pyöristyy automaattisesti yhteen desimaaliin (esimerkissä 24.6).  
+  `timestamp` voidaan jättää pois, jolloin palvelin käyttää nykyhetkeä (UTC).  
 
-### Segmentti (Segment)
-Sisältää segmentin nimen ja ID:n. Toimii antureiden ryhmittelytasona. Segmenttiä ei voi poistaa, jos siinä on aktiivisia antureita.
+  Lisäksi liiketoimintasääntö:  
+  * Jos sensori on tilassa `ERROR`, mittaus hylätään ja palvelin palauttaa virheen.  
+    Toisin sanoen virhetilassa oleva sensori **ei voi** lähettää mittauksia, ja tämä on estetty myös palvelinpäässä.
+
+* `GET /sensors/{sensor_id}/measurements/{measurement_id}`  
+  Hakee yksittäisen mittauksen tiedot.  
+  Endpoint tarkistaa, että mittaus kuuluu annetulle sensorille – jos mittausta ei löydy tai se ei kuulu sensorille, palautetaan virhe (404).  
+  Vastauksessa palautetaan sekä `sensor_id` että mittauksen tiedot (`MeasurementOutWithSensor`-malli).
+
+* `DELETE /sensors/{sensor_id}/measurements/{measurement_id}`  
+  Poistaa yksittäisen mittauksen (esimerkiksi virheellisen datan siivoaminen).  
+  Jos mittausta ei ole tai se ei kuulu sensorille, palautetaan virhe (404).
+
+---
+
+## Suodatus ja haut
+
+Datanäkymiä voidaan rajata tarkemmin kyselyparametreilla (Query Parameters).
+
+* **Anturien listaus (`GET /sensors`)** – keskittyy anturien tilaan ja perusinfoon.
+  * `sensor_status`: suodattaa anturit nykyisen tilan mukaan (esim. `NORMAL`, `ERROR`).
+
+* **Segmentin haku (`GET /segments/{segment_id}`)** – keskittyy tilannekuvaan lohkotasolla.
+  * `sensor_status`: suodattaa segmentin anturit nykyisen tilan mukaan.  
+    Palauttaa segmentin sensoreista listan, jossa kullekin anturille on tila ja viimeisin mittaus.
+
+* **Anturin mittaushistoria (`GET /sensors/{sensor_id}/measurements`)** – keskittyy aikasarjaan.
+  * `measurement_type`: mittaustyyppi, jos käytössä on useampia tyyppejä.  
+  * `limit`: palautettavien mittausten määrä (oletus 10).  
+  * `since` / `until`: aikavälin rajaus.  
+
+---
+
+## Tietomallit ja automatiikka
+
+Tässä kaikki projektissa käytetyt tietomallit:
+
+1. Enumerables  
+2. Segments  
+3. Sensors  
+4. Sensor Statuses  
+5. Measurements  
+
+### 1. Enumerables
+
+* **SensorStatus**  
+  * `NORMAL` – normaali toimintatila  
+  * `ERROR` – virhetilanne, jossa anturi ei saa lähettää mittauksia
+
+* **MeasurementType**  
+  * `TEMPERATURE` – lämpötilamittaus (nykyisessä versiossa ainoa käytössä oleva tyyppi)
+
+* **MeasurementUnit**  
+  * `CELSIUS` – lämpötilan yksikkö (°C)
+
+Näitä enum-tyyppejä käytetään sekä tietokantamalleissa että rajapinnan vastauksissa, jotta arvojen vaihteluväli pysyy hallittuna ja selkeänä.
+
+---
+
+### 2. Segments (Segmenttimallit)
+
+* **SegmentBase / SegmentIn**  
+  * Yksinkertainen malli, jossa on vain `name`.  
+  * Käytetään uuden segmentin luonnissa (`POST /segments`).
+
+* **SegmentOut**  
+  * Palautusmalli, jossa on `id` ja `name`.
+
+* **SegmentOutWithNumberOfSensors**  
+  * Palautusmalli, jossa näkyy segmentin id, nimi ja segmenttiin liitettyjen sensoreiden lukumäärä.  
+  * Soveltuu esimerkiksi yleisiin listausnäkymiin.
+
+* **SegmentOutWithSensors**  
+  * Palauttaa segmentin id:n, nimen ja listan sen sensoreista (`SensorOutInSegmentWithLastMeasurement`).  
+  * Käytössä `GET /segments/{segment_id}` -endpointissa.
+
+* **SegmentDb**  
+  * Tietokantamalli (taulu), jossa:  
+    * `id` – pääavain  
+    * `name` – segmentin nimi  
+    * `sensors` – suhde sensoreihin (yksi segmentti, monta sensoria)
+
+---
+
+### 3. Sensors (Anturimallit)
+
+* **SensorBase / SensorIn**  
+  * Kentät:  
+    * `name` – anturin nimi  
+    * `segment_id` – viittaus lohkoon, johon anturi kuuluu  
+  * `SensorIn`-mallia käytetään anturin luonnissa (`POST /sensors`).
+
+* **SensorOut**  
+  * Palauttaa anturin perustiedot:  
+    * `id`, `name`, `status` (`SensorStatus`)  
+    * `segment` (`SegmentOut`)
+
+* **SensorOutWithMeasurements**  
+  * Sisältää anturin perustiedot sekä listan mittauksista (`measurements: list[MeasurementOut]`).  
+  * Soveltuu, kun halutaan palauttaa anturin metatiedot ja mittaussarja samassa vastauksessa.
+
+* **SensorOutInSegmentWithLastMeasurement**  
+  * Käytetään segmenttinäkymässä.  
+  * Kentät: `id`, `name`, `status` sekä `last_measurement: MeasurementOut | null`.  
+  * Jos anturi ei ole vielä lähettänyt yhtään mittausta, `last_measurement` on `null`.
+
+* **SensorOutWithStatusHistory**  
+  * Sisältää anturin tunnisteen, nimen, segmentin ja tilahistorian (`status_history: list[SensorStatusOut]`).  
+  * Käytössä tilahistoria-endpointissa.
+
+* **SensorDb**  
+  * Tietokantamalli (taulu), jossa:  
+    * `id` – pääavain  
+    * `name` – anturin nimi  
+    * `segment_id` – viittaus `SegmentDb`-tauluun  
+    * `status` – nykyinen tila (`SensorStatus`, oletus `NORMAL`)  
+    * `segment` – suhde segmenttiin  
+    * `measurements` – suhde mittauksiin (`MeasurementDb`), kaskadipoisto käytössä (`cascade: all, delete-orphan`)  
+    * `status_history` – suhde tilahistoriaan (`SensorStatusDb`), myös kaskadipoistolla
+
+---
+
+### 4. Sensor Statuses (Tilamallit)
+
+* **SensorStatusBase / SensorStatusIn**  
+  * Kentät:  
+    * `status: SensorStatus`  
+    * `timestamp: datetime` (oletuksena nykyhetki UTC-ajassa)  
+  * `SensorStatusIn` sisältää lisäksi `sensor_id`-kentän, jota käytetään, kun tallennetaan uusi tilarivi tietokantaan.
+
+* **SensorStatusOut**  
+  * Palauttaa tilahistoriaan liittyvät tiedot:  
+    * `id`, `status`, `timestamp`
+
+* **SensorStatusDb**  
+  * Tietokantamalli tilahistorian riveille:  
+    * `id` – pääavain  
+    * `sensor_id` – viittaus `SensorDb`-tauluun  
+    * `status` – tilakoodi (`SensorStatus`)  
+    * `timestamp` – tilamuutoksen aikaleima  
+    * `sensor` – suhde takaisin sensoriin (`SensorDb.status_history`)
+
+---
+
+### 5. Measurements (Mittausmallit)
+
+* **MeasurementBase**  
+  * Sisältää `sensor_id`-kentän (mihin sensoriin mittaus liittyy).  
+  * Perusluokka, jota muut mallit laajentavat.
+
+* **MeasurementIn**  
+  * Käytetään, kun anturi lähettää uuden mittauksen (`POST /sensors/{sensor_id}/measurements`).  
+  * Kentät:  
+    * `value: float` – mitattu arvo  
+    * `unit: MeasurementUnit` – oletus `CELSIUS`  
+    * `type: MeasurementType` – oletus `TEMPERATURE`  
+    * `timestamp: datetime` – oletuksena nykyhetki UTC-ajassa  
+  * `value` pyöristetään automaattisesti yhteen desimaaliin `field_validator`-funktion avulla.
+
+* **MeasurementOut**  
+  * Palautusmalli yksittäiselle mittaukselle:  
+    * `id`, `value`, `unit`, `type`, `timestamp`
+
+* **MeasurementOutWithSensor**  
+  * Käytetään, kun halutaan palauttaa sekä mittaus että sen anturi.  
+  * Kentät:  
+    * `sensor_id` (peritty `MeasurementBase`-luokasta)  
+    * `measurement: MeasurementOut`
+
+* **MeasurementDb**  
+  * Tietokantamalli mittauksille:  
+    * `id` – pääavain  
+    * `sensor_id` – viittaus `SensorDb`-tauluun  
+    * `sensor` – suhde takaisin sensoriin (`SensorDb.measurements`)  
+    * `value: float` – pyöristetty mittausarvo  
+    * `unit: MeasurementUnit` – esim. `CELSIUS`  
+    * `type: MeasurementType` – esim. `TEMPERATURE`  
+    * `timestamp: datetime` – mittauksen aikaleima (UTC)
+
+Yhdessä nämä mallit muodostavat johdonmukaisen kokonaisuuden, jossa:
+
+* Segmentit ryhmittelevät sensoreita  
+* Sensorit kuuluvat segmentteihin ja tuottavat mittauksia  
+* Sensorien tilat ja tilahistoria tallentuvat erilliseen tauluun  
+* Mittaukset ovat aina sidottuja tiettyyn sensoriin, ja virhetilassa (`ERROR`) oleva sensori ei voi lähettää uusia mittauksia.
