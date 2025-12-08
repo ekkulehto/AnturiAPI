@@ -19,6 +19,34 @@ class MeasurementUnit(str, Enum):
     CELSIUS = 'CELSIUS'
 
 # =================================================================================
+#    SEGMENTS
+# =================================================================================
+
+class SegmentBase(SQLModel):
+    name: str
+
+class SegmentIn(SegmentBase):
+    pass
+
+class SegmentOut(SQLModel):
+    id: int
+    name: str
+
+class SegmentOutWithNumberOfSensors(SQLModel):
+    id: int
+    name: str
+    number_of_sensors: int
+
+class SegmentOutWithSensors(SQLModel):
+    id: int
+    name: str
+    sensors: list['SensorOutInSegmentWithLastMeasurement'] = Field(default_factory=list)
+
+class SegmentDb(SegmentBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    sensors: list['SensorDb'] = Relationship(back_populates='segment')
+
+# =================================================================================
 #    SENSORS
 # =================================================================================
 
@@ -125,31 +153,3 @@ class MeasurementDb(MeasurementBase, table=True):
     unit: MeasurementUnit
     type: MeasurementType
     timestamp: datetime
-
-# =================================================================================
-#    SEGMENTS
-# =================================================================================
-
-class SegmentBase(SQLModel):
-    name: str
-
-class SegmentIn(SegmentBase):
-    pass
-
-class SegmentOut(SQLModel):
-    id: int
-    name: str
-
-class SegmentOutWithNumberOfSensors(SQLModel):
-    id: int
-    name: str
-    number_of_sensors: int
-
-class SegmentOutWithSensors(SQLModel):
-    id: int
-    name: str
-    sensors: list['SensorOutInSegmentWithLastMeasurement'] = Field(default_factory=list)
-
-class SegmentDb(SegmentBase, table=True):
-    id: int = Field(default=None, primary_key=True)
-    sensors: list['SensorDb'] = Relationship(back_populates='segment')
