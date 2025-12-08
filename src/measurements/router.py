@@ -1,14 +1,16 @@
+from typing import Annotated
 from fastapi import APIRouter, Path, Query, status, Depends
 from sqlmodel import Session
 
+from src.measurements.schemas import MeasurementFilterForGetSensorById
+
 from ..database import get_session
 from ..measurements import service as crud
-from ..models import MeasurementIn, MeasurementOutWithSensor, MeasurementType
+from ..models import MeasurementIn, MeasurementOutWithSensor, SensorOutWithMeasurements
 
 from .docs import (
-    GET_ALL_MEASUREMENTS_DESCRIPTION, 
-    GET_ALL_MEASUREMENTS_SUMMARY,
-    GET_ALL_MEASUREMENTS_TYPE_FILTER_DESCRIPTION,
+    GET_SENSOR_MEASUREMENTS_BY_ID_SUMMARY, 
+    GET_SENSOR_MEASUREMENTS_BY_ID_DESCRIPTION,
     CREATE_MEASUREMENT_SUMMARY,
     CREATE_MEASUREMENT_DESCRIPTION,
     GET_MEASUREMENT_BY_ID_SUMMARY,
@@ -20,24 +22,21 @@ from .docs import (
 router = APIRouter(prefix='/sensors', tags=['Sensor Measurements'])
 
 # =================================================================================
-#    GET ALL MEASUREMENTS
+#    GET SENSOR'S MEASUREMENTS BY ID
 # =================================================================================
 
 @router.get(
         '/{sensor_id}/measurements', 
-        response_model=list[MeasurementOutWithSensor], 
-        summary=GET_ALL_MEASUREMENTS_SUMMARY, 
-        description=GET_ALL_MEASUREMENTS_DESCRIPTION
+        response_model=SensorOutWithMeasurements,
+        summary=GET_SENSOR_MEASUREMENTS_BY_ID_SUMMARY,
+        description=GET_SENSOR_MEASUREMENTS_BY_ID_DESCRIPTION
 )
-def get_all_measurements(
-    *, 
-    session: Session = Depends(get_session),
-    measurement_type: MeasurementType | None = Query(
-        default=None,
-        description=GET_ALL_MEASUREMENTS_TYPE_FILTER_DESCRIPTION
-    )
+def get_sensor_by_id(
+    *, session: Session = Depends(get_session), 
+    sensor_id: int = Path(..., description='Unique identifier of the sensor whose measurements to retrieve'), 
+    filters: Annotated[MeasurementFilterForGetSensorById, Query()]
 ):
-    return crud.get_all_measurements(session, measurement_type)
+    return crud.get_sensor_measurements_by_id(session, sensor_id, filters)
 
 # =================================================================================
 #    CREATE NEW MEASUREMENT
