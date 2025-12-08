@@ -107,8 +107,8 @@ def update_segment_by_id(session: Session, segment_id: int, segment_update: Segm
             detail='Segment not found'
         )
     
-    if segment_update.name is not None:
-        segment.name = segment_update.name
+    if segment_update.name is None or segment_update.name == segment.name:
+        return segment
     
     session.add(segment)
     session.commit()
