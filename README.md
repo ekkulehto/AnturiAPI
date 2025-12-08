@@ -58,7 +58,7 @@ Kun palvelin on käynnissä, avaa selain ja siirry osoitteeseen:
 
 ---
 
-## Pikaopas käyttöön (esimerkkivirta)
+## Pikaopas käyttöön
 
 Kun olet avannut Swagger UI:n, voit testata API:n toimintaa esimerkiksi seuraavassa järjestyksessä:
 
@@ -68,7 +68,7 @@ Kun olet avannut Swagger UI:n, voit testata API:n toimintaa esimerkiksi seuraava
    * Paina "Try it out" ja lähetä JSON:
 
          {
-           "name": "LOHKO_A13_13"
+           "name": "LOHKO_1"
          }
 
    * Segmentti on välttämätön, koska anturi liitetään aina johonkin lohkoon.
@@ -76,7 +76,7 @@ Kun olet avannut Swagger UI:n, voit testata API:n toimintaa esimerkiksi seuraava
 2. **Luo Anturi**
 
    * Avaa `POST /sensors`  
-   * Lähetä JSON (oleta, että segmentin id on 1):
+   * Lähetä JSON (olettaen, että segmentin id on 1):
 
          {
            "name": "ANTURI_1",
@@ -126,7 +126,7 @@ Tehdashallin lohkojen hallinta ja niihin kuuluvien antureiden tarkastelu.
   Luo uuden segmentin.
 
       {
-        "name": "LOHKO_A13_13"
+        "name": "LOHKO_1"
       }
 
 * `GET /segments/{segment_id}`  
