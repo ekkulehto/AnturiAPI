@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Path, Query, status, Depends
 from sqlmodel import Session
 
-from src.measurements.schemas import MeasurementFilterForGetSensorById
+from ..measurements.schemas import MeasurementFilterForGetSensorById
 
 from ..database import get_session
 from ..measurements import service as crud

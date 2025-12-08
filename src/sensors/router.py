@@ -1,10 +1,8 @@
-from typing import Annotated
 from fastapi import APIRouter, Path, Query, status, Depends
 from sqlmodel import Session
 
 from ..database import get_session
 from .schemas import SensorUpdate
-from ..measurements.schemas import MeasurementFilterForGetSensorById
 from ..sensors import service as crud
 from ..models import (
     SensorIn, 

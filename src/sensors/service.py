@@ -1,18 +1,14 @@
 from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
-from src.sensor_status.router import change_sensor_status_by_id
-from src.sensor_status.schemas import SensorStatusUpdate
+from ..sensor_status.router import change_sensor_status_by_id
+from ..sensor_status.schemas import SensorStatusUpdate
 
 from .schemas import SensorUpdate
-from ..measurements.schemas import MeasurementFilterForGetSensorById
 from ..models import (
     SensorIn, 
     SensorDb,
-    SensorOutWithMeasurements, 
     SensorStatus, 
-    MeasurementDb, 
-    MeasurementOut, 
     SegmentDb, 
 )
 

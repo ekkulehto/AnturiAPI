@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
-from src.measurements.schemas import MeasurementFilterForGetSensorById
+from ..measurements.schemas import MeasurementFilterForGetSensorById
 
 from ..models import (
     MeasurementIn, 

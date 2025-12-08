@@ -1,8 +1,6 @@
-from typing import Annotated
 from fastapi import APIRouter, Path, Query, status, Depends
 from sqlmodel import Session
 
-from ..measurements.schemas import MeasurementFilterForGetSegmentById
 from ..database import get_session
 from .schemas import SegmentUpdate
 from ..segments import service as crud
