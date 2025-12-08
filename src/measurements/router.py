@@ -69,9 +69,10 @@ def create_measurement(
 def get_measurement_by_id(
     *, 
     session: Session = Depends(get_session), 
+    sensor_id: int = Path(..., description='Unique identifier of the sensor whose measurement to retrieve'),
     measurement_id: int = Path(..., description='Unique identifier of the measurement to retrieve'),
 ):
-    return crud.get_measurement_by_id(session, measurement_id)
+    return crud.get_measurement_by_id(session, sensor_id, measurement_id)
 
 # =================================================================================
 #    DELETE MEASUREMENT BY ID
@@ -86,6 +87,7 @@ def get_measurement_by_id(
 def delete_measurement_by_id(
     *, 
     session: Session = Depends(get_session), 
+    sensor_id: int = Path(..., description='Unique identifier of the sensor whose measurement to delete'),
     measurement_id: int = Path(..., description='Unique identifier of the measurement to delete'),
 ):
-    return crud.delete_measurement_by_id(session, measurement_id)
+    return crud.delete_measurement_by_id(session, sensor_id, measurement_id)
