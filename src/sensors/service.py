@@ -60,7 +60,7 @@ def create_sensor(session: Session, sensor_in: SensorIn):
 #    GET SENSOR BY ID
 # =================================================================================
 
-def get_sensor_by_id(session: Session, sensor_id: int, filters: MeasurementFilterForGetSensorById):
+def get_sensor_by_id(session: Session, sensor_id: int):
     sensor = session.get(SensorDb, sensor_id)
 
     if not sensor:
@@ -69,28 +69,7 @@ def get_sensor_by_id(session: Session, sensor_id: int, filters: MeasurementFilte
             status_code=status.HTTP_404_NOT_FOUND
         )
     
-    query = select(MeasurementDb).where(MeasurementDb.sensor_id == sensor_id)
-
-    if filters.since is not None:
-        query = query.where(MeasurementDb.timestamp >= filters.since)
-    
-    if filters.until is not None:
-        query = query.where(MeasurementDb.timestamp <= filters.until)
-    
-    query = query.order_by(MeasurementDb.timestamp.desc())
-
-    query = query.limit(filters.limit)
-    
-    measurements_db = session.exec(query).all()
-    measurements_out = [MeasurementOut.model_validate(measurement) for measurement in measurements_db]
-
-    return SensorOutWithMeasurements(
-        id=sensor_id,
-        name=sensor.name,
-        status=sensor.status,
-        segment=sensor.segment,
-        measurements=measurements_out
-    )
+    return SensorDb.model_validate(sensor)
 
 # =================================================================================
 #    UPDATE SENSOR BY ID
