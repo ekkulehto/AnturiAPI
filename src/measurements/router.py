@@ -17,14 +17,14 @@ from .docs import (
     DELETE_MEASUREMENT_BY_ID_DESCRIPTION
 )
 
-router = APIRouter(prefix='/measurements', tags=['Measurements'])
+router = APIRouter(prefix='/sensors', tags=['Sensor Measurements'])
 
 # =================================================================================
 #    GET ALL MEASUREMENTS
 # =================================================================================
 
 @router.get(
-        '', 
+        '/{sensor_id}/measurements', 
         response_model=list[MeasurementOutWithSensor], 
         summary=GET_ALL_MEASUREMENTS_SUMMARY, 
         description=GET_ALL_MEASUREMENTS_DESCRIPTION
@@ -44,7 +44,7 @@ def get_all_measurements(
 # =================================================================================
 
 @router.post(
-        '', 
+        '/{sensor_id}/measurements', 
         status_code=status.HTTP_201_CREATED, 
         response_model=MeasurementOutWithSensor,
         summary=CREATE_MEASUREMENT_SUMMARY,
@@ -62,7 +62,7 @@ def create_measurement(
 # =================================================================================
 
 @router.get(
-        '/{measurement_id}', 
+        '/{sensor_id}/measurements/{measurement_id}', 
         response_model=MeasurementOutWithSensor,
         summary=GET_MEASUREMENT_BY_ID_SUMMARY,
         description=GET_MEASUREMENT_BY_ID_DESCRIPTION
@@ -79,7 +79,7 @@ def get_measurement_by_id(
 # =================================================================================
 
 @router.delete(
-        '/{measurement_id}', 
+        '/{sensor_id}/measurements/{measurement_id}', 
         status_code=status.HTTP_204_NO_CONTENT,
         summary=DELETE_MEASUREMENT_BY_ID_SUMMARY,
         description=DELETE_MEASUREMENT_BY_ID_DESCRIPTION
