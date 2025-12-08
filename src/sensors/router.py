@@ -9,7 +9,6 @@ from ..sensors import service as crud
 from ..models import (
     SensorIn, 
     SensorOut, 
-    SensorOutWithMeasurements, 
     SensorStatus
 )
 
@@ -72,16 +71,15 @@ def create_sensor(
 
 @router.get(
         '/{sensor_id}', 
-        response_model=SensorOutWithMeasurements,
+        response_model=SensorOut,
         summary=GET_SENSOR_BY_ID_SUMMARY,
         description=GET_SENSOR_BY_ID_DESCRIPTION
 )
 def get_sensor_by_id(
     *, session: Session = Depends(get_session), 
     sensor_id: int = Path(..., description='Unique identifier of the sensor to retrieve'), 
-    filters: Annotated[MeasurementFilterForGetSensorById, Query()]
 ):
-    return crud.get_sensor_by_id(session, sensor_id, filters)
+    return crud.get_sensor_by_id(session, sensor_id)
 
 # =================================================================================
 #    UPDATE SENSOR BY ID
