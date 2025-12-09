@@ -4,8 +4,9 @@
 
 GET_SENSOR_MEASUREMENTS_BY_ID_SUMMARY = 'List sensor measurements by ID'
 GET_SENSOR_MEASUREMENTS_BY_ID_DESCRIPTION = '''
-- Return measurements for a single sensor by its ID.
-- The response also includes basic sensor and segment details.
+- Return measurements for a single sensor using its unique ID.
+- Optionally filter measurements by type, limit, and time range.
+- Include basic sensor and segment details for context.
 '''
 
 # =================================================================================
