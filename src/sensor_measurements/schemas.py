@@ -6,7 +6,7 @@ from ..models import MeasurementType
 class MeasurementFilterForGetSensorById(BaseModel):
     measurement_type: MeasurementType | None = Field(
         default=None, 
-        description='Optional measurement type filter.'
+        description='Filter measurements by their type. If omitted, measurements of all types are included.'
     )
     limit: int = Field(
         10, 
