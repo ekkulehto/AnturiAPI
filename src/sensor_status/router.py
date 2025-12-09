@@ -18,7 +18,7 @@ from .docs import (
     CHANGE_SENSOR_STATUS_BY_ID_DESCRIPTION,
 )
 
-router = APIRouter(prefix='/sensors', tags=['Sensor Status'])
+router = APIRouter(prefix='/sensors', tags=['Sensor Statuses'])
 
 # =================================================================================
 #    GET SENSOR STATUS HISTORY BY ID
