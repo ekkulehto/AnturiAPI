@@ -46,7 +46,7 @@ Segmentit ovat ylempi taso ja sensorit elävät siellä sisällä.
 
 ### Sensorin ympärille rakennetut kolme osa-aluetta
 
-Sensorin ympärille jaoin asiat periaatteessa kolmeen osaan. `Sensors`-osio keskittyy sensorin perustietoihin – luomiseen, hakemiseen, päivittämiseen ja poistamiseen. `Sensor Status` -osio kuvaa sensorin tilaa ja tilahistoriaa: siellä näkyy aikajana tilamuutoksista ja on oma rajapintansa tilan vaihtamiseen niin, että jokainen muutos tallentuu myös historiaan. `Sensor Measurements` -osio käsittelee sensorikohtaista mittaushistoriaa, jossa mittauksia voidaan hakea rajattuna esimerkiksi aikavälin tai maksimimäärän perusteella, ja uudet mittaukset luodaan aina nimenomaan jonkin tietyn sensorin alle.
+Sensorin ympärille jaoin asiat periaatteessa kolmeen osaan. `Sensors`-osio keskittyy sensorin perustietoihin – luomiseen, hakemiseen, päivittämiseen ja poistamiseen. `Sensor Status` -osio kuvaa sensorin tilaa ja tilahistoriaa: siellä näkyy aikajana tilamuutoksista ja on oma rajapintansa tilan vaihtamiseen niin, että jokainen muutos tallentuu myös historiaan. `Sensor Measurements` -osio käsittelee sensorikohtaista mittaushistoriaa, jossa mittauksia voidaan hakea rajattuna esimerkiksi aikavälin tai maksimimäärän perusteella, ja uudet mittaukset luodaan aina nimenomaan jonkin tietyn sensorin alle. Sensorin poistaminen poistaa myös siihen liitetyt mittaukset ja tilahistorian.
 
 ### Mittausrajapinnan kaksitasoinen malli
 
@@ -55,6 +55,10 @@ Mittauspuolella refaktoroin ratkaisun lopulta kahteen tasoon. Sensorikohtainen r
 ### Swaggerin luettavuus
 
 Kaiken taustalla oli ajatus siitä, että Swaggerin näkymä olisi ihmiselle luettava ja selkeä: ensin lohkot (`Segments`), sitten sensorit ja niiden ympärille jaetut kolme osa-aluetta (`Sensors`, `Sensor Status`, `Sensor Measurements`) sekä lopuksi yksittäinen mittaus omana resurssinaan (`Measurements`). Halusin, että polut tukevat ja korostavat tätä hierarkiaa.
+
+### Jatkokehitys
+
+Nykyisessä versiossa `Measurements`-osiossa käsitellään vain yksittäisiä mittauksia niiden id:n perusteella, eikä esimerkiksi kaikkien mittausten hakua ole toteutettu. Mittausten tietokantamallia ja endpointteja olisi kuitenkin helppo laajentaa minimaalisilla muutoksilla esimerkiksi `GET /measurements` -listaukseen tai jatkojalostettuihin mittareihin (keskiarvot, hälytysrajat jne.), jos tarve tulevaisuudessa kasvaisi.
 
 ---
 
