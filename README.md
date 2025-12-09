@@ -98,10 +98,11 @@ Kun olet avannut Swagger UI:n, voit testata API:n toimintaa esimerkiksi seuraava
 
 4. **Tarkastele Dataa**
 
-   * `GET /sensors/1` – anturin perustiedot (nimi, lohko, tila).  
-   * `GET /sensors/1/measurements` – anturin uusimmat mittaukset.  
+   * `GET /segments/1` – segmentin sensoreiden tilannekuva.
+   * `GET /sensors/1` – anturin perustiedot.  
    * `GET /sensors/1/status/history` – anturin tilamuutokset ajassa.  
-   * `GET /segments/1` – segmentin sensoreiden tilannekuva (tila + viimeisin mittaus per anturi).  
+   * `GET /sensors/1/measurements` – anturin uusimmat mittaukset.  
+   * `GET /measurements/{measurement_id}` – yksittäisen mittauksen tarkastelu
 
 ---
 
