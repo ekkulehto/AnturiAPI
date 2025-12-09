@@ -2,7 +2,8 @@
 
 ### Lähtötilanne ja aiempi kokemus
 
-Lähdin liikkeelle aika selkeällä fiiliksellä siitä, mitä haluan rakentaa. Olin ennen tätä kurssia tehnyt tekoälyprojektin, jossa purin Hevy-kuntosalisovelluksen Swagger-dokumentaatiota ja kokeilin sen rajapintoja käsin. Siitä jäi tosi konkreettinen tuntuma siihen, miltä “mukava” API tuntuu (tai ainakin pitäisi tuntua) käyttäjän näkökulmasta: miten endpointit ketjuuntuvat, mitä tietoa on kätevä palauttaa ja miten Pydantic-tyyliset mallit istuvat siihen väliin.
+Lähdin liikkeelle aika selkeällä fiiliksellä siitä, mitä haluan rakentaa. Olin ennen tätä kurssia tehnyt tekoälyprojektin, jossa purin Hevy-kuntosalisovelluksen Swagger-dokumentaatiota ja kokeilin sen rajapintoja käsin. Siitä jäi tosi konkreettinen tuntuma siihen, miltä “mukava” API tuntuu (tai ainakin pitäisi tuntua) käyttäjän näkökulmasta: miten endpointit ketjuuntuvat, mitä tietoa on kätevä palauttaa ja miten Pydantic-tyyliset mallit istuvat siihen väliin. Tämän takia halusin, että osa endpointtien vastauksista sisältää myös hieman “ylimääräistä” kontekstia tulevia käyttötilanteita ja mahdollisia seuraavia API-kutsuja varten.
+
 
 ### IIoT-opintojen vaikutus ajatteluun
 
