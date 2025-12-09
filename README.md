@@ -271,6 +271,9 @@ Datanäkymiä voidaan rajata tarkemmin kyselyparametreilla (Query Parameters).
   * `limit`: palautettavien mittausten määrä (oletus 10).  
   * `since` / `until`: aikavälin rajaus.  
 
+* **Anturin tilahistoria (`GET /sensors/{sensor_id}/status/history`)** – keskittyy tilojen muutoksiin ajassa.
+  * `sensor_status`: tilahistorian rajaus niin, että voidaan hakea joko kaikki tilat (oletus) tai vain tietyt tilat, esim. pelkät `NORMAL`- tai pelkät `ERROR`-tilat.
+
 ---
 
 ## Tietomallit ja automatiikka
