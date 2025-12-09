@@ -71,7 +71,7 @@ def get_segment_by_id(
     segment_id: int = Path(..., description='Unique identifier of the segment to retrieve'),
     sensor_status: SensorStatus | None = Query(
         default=None,
-        description="Optional filter for the segment's sensors current status.",
+        description="Filter sensors by their current status. If omitted, sensors in all statuses are included.",
     ),
 ):
     return crud.get_segment_by_id(session, segment_id, sensor_status)
